@@ -1,4 +1,5 @@
 const contact = {
+  prefix: "م.",
   firstName: "أحمد",
   lastName: "علي محمد",
   jobTitle: "المهندس",
@@ -12,8 +13,8 @@ function buildVCard(c) {
   return [
     "BEGIN:VCARD",
     "VERSION:3.0",
-    `N:${c.lastName};${c.firstName};;;`,
-    `FN:${c.firstName} ${c.lastName}`,
+    `N:${c.lastName};${c.firstName};;${c.prefix};`,
+    `FN:${c.prefix} ${c.firstName} ${c.lastName}`,
     `TITLE:${c.jobTitle} - ${c.department}`,
     `ORG:${c.org}`,
     `TEL;TYPE=CELL:${c.phone}`,
