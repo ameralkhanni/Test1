@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(run)",
+      "Skill(run:*)",
+      "PowerShell(Get-Command python -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command node -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command npx -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Job)",
+      "PowerShell(python -m http.server 8723)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:8723/index.html\" -UseBasicParsing)",
+      "PowerShell(node \"C:\\\\Users\\\\aa7bb\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-aa7bb-OneDrive------------Digital-business-card-website-template\\\\91356003-eba4-4ae3-88f7-b4b832562d3c\\\\scratchpad\\\\static-server.js\" \"c:\\\\Users\\\\aa7bb\\\\OneDrive\\\\??? ??????\\\\Digital business card website template\" 8723)",
+      "PowerShell(Get-Command chromium-cli -ErrorAction SilentlyContinue)",
+      "PowerShell(npx --yes playwright --version 2>&1)",
+      "PowerShell(npx --yes playwright install chromium 2>&1)",
+      "PowerShell(Get-Process -Name node -ErrorAction SilentlyContinue | Where-Object { $_.Id -ne $PID } | ForEach-Object { $_.Id })",
+      "PowerShell(Stop-Process -Id 5484 -Force -Confirm:$false)"
+    ]
+  }
+}
