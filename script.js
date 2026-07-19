@@ -1,57 +1,67 @@
 const translations = {
   ar: {
     dir: "rtl",
-    pageTitle: "أحمد علي محمد | البطاقة الرقمية",
+    pageTitle: "حسن بن محمد الأمير  | البطاقة الرقمية",
     logoSrc: "assets/logo.webp",
     logoAlt: "شعار الجهة",
     avatarAlt: "الصورة الشخصية",
-    jobTitle: "المهندس",
-    name: "أحمد علي محمد",
-    department: "مدير إدارة التحول الرقمي",
+    jobTitle: "الدكتور",
+    name: "حسن بن محمد الأمير ",
+    department: "مساعد الرئيس لقطاع التقنيات والحلول",
     phoneLabel: "رقم الجوال",
+    phone2Label: "هاتف العمل",
+    phone3Label: "الرقم الموحد",
     emailLabel: "البريد الإلكتروني",
+    addressLabel: "العنوان",
+    addressValue: "الرياض، المملكة العربية السعودية\nص.ب 8713، الرمز البريدي 12611",
     addContact: "إضافة إلى جهات الاتصال",
     footerOrg: "الهيئة العامة للمساحة والمعلومات الجيومكانية",
-    devCredit: "تطوير Amer Khanni",
     toggleLabel: "EN"
   },
   en: {
     dir: "ltr",
-    pageTitle: "Ahmed Ali Mohammed | Digital Business Card",
+    pageTitle: "Dr. Hasan M. Alameer | Digital Business Card",
     logoSrc: "assets/logo-en.png",
     logoAlt: "GEOSA logo",
     avatarAlt: "Profile photo",
-    jobTitle: "Engineer",
-    name: "Ahmed Ali Mohammed",
-    department: "Director of Digital Transformation",
+    jobTitle: "Doctor",
+    name: "Hasan M. Alameer",
+    department: "Assistant to the President for Technology and Solutions",
     phoneLabel: "Mobile",
+    phone2Label: "Work Phone",
+    phone3Label: "Unified Number",
     emailLabel: "Email",
+    addressLabel: "Address",
+    addressValue: "Riyadh, Kingdom of Saudi Arabia\nP.O. Box 8713, Zip Code 12611",
     addContact: "Add to Contacts",
     footerOrg: "General Authority for Survey and Geospatial Information",
-    devCredit: "Developed by Amer Khanni",
     toggleLabel: "AR"
   }
 };
 
 const vcardData = {
   ar: {
-    prefix: "م.",
-    firstName: "أحمد",
-    lastName: "علي محمد",
-    department: "مدير إدارة التحول الرقمي",
-    org: "الهيئة العامة للمساحة والمعلومات الجيومكانية"
+    prefix: "د.",
+    firstName: "حسن",
+    lastName: "بن محمد الأمير ",
+    department: "مساعد الرئيس لقطاع التقنيات والحلول",
+    org: "الهيئة العامة للمساحة والمعلومات الجيومكانية",
+    address: "الرياض، المملكة العربية السعودية، ص.ب 8713، الرمز البريدي 12611"
   },
   en: {
-    prefix: "Eng.",
-    firstName: "Ahmed",
-    lastName: "Ali Mohammed",
-    department: "Director of Digital Transformation",
-    org: "General Authority for Survey and Geospatial Information"
+    prefix: "Dr.",
+    firstName: "Hasan",
+    lastName: "M. Alameer",
+    department: "Assistant to the President for Technology and Solutions",
+    org: "General Authority for Survey and Geospatial Information",
+    address: "Riyadh, Kingdom of Saudi Arabia, P.O. Box 8713, Zip Code 12611"
   }
 };
 
-const phone = "+966500000000";
-const email = "ahmed.ali@example.gov.sa";
+const phone = "+966555585842";
+const phone2 = "+966115138080";
+const phone3 = "920000427,8080";
+const email = "h.alameer@geosa.gov.sa";
 
 let currentLang = localStorage.getItem("cardLang") || "ar";
 
@@ -91,7 +101,10 @@ function buildVCard(lang) {
     `TITLE:${c.department}`,
     `ORG:${c.org}`,
     `TEL;TYPE=CELL:${phone}`,
+    `TEL;TYPE=WORK:${phone2}`,
+    `TEL;TYPE=WORK,VOICE:${phone3}`,
     `EMAIL;TYPE=INTERNET:${email}`,
+    `ADR;TYPE=WORK:;;${c.address};;;;`,
     "END:VCARD"
   ].join("\r\n");
 }

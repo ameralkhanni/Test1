@@ -219,6 +219,14 @@ body {
   background-color: #f2f7f8;
 }
 
+.contact-row--static {
+  cursor: default;
+}
+
+.contact-row--static:hover {
+  background-color: transparent;
+}
+
 .contact-row + .contact-row {
   border-top: 1px solid #eef2f3;
 }
@@ -260,6 +268,13 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.contact-row__value--wrap {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: pre-line;
+  line-height: 1.35;
 }
 
 /* Actions */
