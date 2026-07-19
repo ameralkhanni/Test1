@@ -13,7 +13,7 @@ const translations = {
     phone3Label: "الرقم الموحد",
     emailLabel: "البريد الإلكتروني",
     addressLabel: "العنوان",
-    addressValue: "الرياض، المملكة العربية السعودية\nص.ب 8713، الرمز البريدي 12611",
+    addressValue: "الرياض، المملكة العربية السعودية\nرقم 64، العليا، الرمز البريدي 12213",
     addContact: "إضافة إلى جهات الاتصال",
     footerOrg: "الهيئة العامة للمساحة والمعلومات الجيومكانية",
     toggleLabel: "EN"
@@ -32,7 +32,7 @@ const translations = {
     phone3Label: "Unified Number",
     emailLabel: "Email",
     addressLabel: "Address",
-    addressValue: "Riyadh, Kingdom of Saudi Arabia\nP.O. Box 8713, Zip Code 12611",
+    addressValue: "Riyadh, Kingdom of Saudi Arabia\nNo. 64, Al Olaya, Zip Code 12213",
     addContact: "Add to Contacts",
     footerOrg: "General Authority for Survey and Geospatial Information",
     toggleLabel: "AR"
@@ -46,7 +46,7 @@ const vcardData = {
     lastName: "بن محمد الأمير ",
     department: "مساعد الرئيس لقطاع التقنيات والحلول",
     org: "الهيئة العامة للمساحة والمعلومات الجيومكانية",
-    address: "الرياض، المملكة العربية السعودية، ص.ب 8713، الرمز البريدي 12611"
+    address: "الرياض، المملكة العربية السعودية، رقم 64، العليا، الرمز البريدي 12213"
   },
   en: {
     prefix: "Dr.",
@@ -54,7 +54,7 @@ const vcardData = {
     lastName: "M. Alameer",
     department: "Assistant to the President for Technology and Solutions",
     org: "General Authority for Survey and Geospatial Information",
-    address: "Riyadh, Kingdom of Saudi Arabia, P.O. Box 8713, Zip Code 12611"
+    address: "Riyadh, Kingdom of Saudi Arabia, No. 64, Al Olaya, Zip Code 12213"
   }
 };
 
