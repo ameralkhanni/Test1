@@ -46,7 +46,10 @@ const vcardData = {
     lastName: "بن محمد الأمير ",
     department: "مساعد الرئيس لقطاع التقنيات والحلول",
     org: "الهيئة العامة للمساحة والمعلومات الجيومكانية",
-    address: "الرياض، المملكة العربية السعودية، رقم 64، العليا، الرمز البريدي 12213"
+    street: "رقم 64، العليا",
+    city: "الرياض",
+    postalCode: "12213",
+    country: "المملكة العربية السعودية"
   },
   en: {
     prefix: "Dr.",
@@ -54,7 +57,10 @@ const vcardData = {
     lastName: "M. Alameer",
     department: "Assistant to the President for Technology and Solutions",
     org: "General Authority for Survey and Geospatial Information",
-    address: "Riyadh, Kingdom of Saudi Arabia, No. 64, Al Olaya, Zip Code 12213"
+    street: "No. 64, Al Olaya",
+    city: "Riyadh",
+    postalCode: "12213",
+    country: "Kingdom of Saudi Arabia"
   }
 };
 
@@ -104,7 +110,7 @@ function buildVCard(lang) {
     `TEL;TYPE=WORK:${phone2}`,
     `TEL;TYPE=WORK,VOICE:${phone3}`,
     `EMAIL;TYPE=INTERNET:${email}`,
-    `NOTE:${c.address}`,
+    `ADR;TYPE=WORK:;;${c.street};${c.city};;${c.postalCode};${c.country}`,
     "END:VCARD"
   ].join("\r\n");
 }
