@@ -68,7 +68,7 @@ const vcardData = {
 
 const phone = "+966555585842";
 const phone2 = "+966115138080";
-const phone3 = "920000427,8080";
+const phone3 = "920000427";
 const email = "h.alameer@geosa.gov.sa";
 
 let currentLang = localStorage.getItem("cardLang") || "ar";
