@@ -104,7 +104,7 @@ function buildVCard(lang) {
     `TEL;TYPE=WORK:${phone2}`,
     `TEL;TYPE=WORK,VOICE:${phone3}`,
     `EMAIL;TYPE=INTERNET:${email}`,
-    `ADR;TYPE=WORK:;;${c.address};;;;`,
+    `NOTE:${c.address}`,
     "END:VCARD"
   ].join("\r\n");
 }
