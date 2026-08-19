@@ -122,7 +122,7 @@
           <label for="mobile">رقم الجوال</label>
           <div class="phone-input" dir="ltr">
             <span class="phone-input__prefix">+966</span>
-            <input id="mobile" name="mobile" type="tel" required inputmode="numeric" maxlength="9" placeholder="5XXXXXXXX">
+            <input id="mobile" name="mobile" type="tel" required inputmode="numeric" lang="en" maxlength="9" placeholder="5XXXXXXXX">
           </div>
           <span class="field__inline-error" id="mobileError" hidden></span>
         </div>
@@ -130,7 +130,7 @@
           <label for="workPhone">هاتف العمل <span class="field__hint">(اختياري)</span></label>
           <div class="phone-input" dir="ltr">
             <span class="phone-input__prefix">+966</span>
-            <input id="workPhone" name="workPhone" type="tel" inputmode="numeric" maxlength="9" placeholder="1XXXXXXXX">
+            <input id="workPhone" name="workPhone" type="tel" inputmode="numeric" lang="en" maxlength="9" placeholder="1XXXXXXXX">
           </div>
           <span class="field__inline-error" id="workPhoneError" hidden></span>
         </div>
@@ -138,14 +138,14 @@
           <label for="extension">رقم التحويلة <span class="field__hint">(اختياري)</span></label>
           <div class="phone-input" dir="ltr">
             <span class="phone-input__prefix">920000427،</span>
-            <input id="extension" name="extension" type="tel" inputmode="numeric" maxlength="4" placeholder="XXXX">
+            <input id="extension" name="extension" type="tel" inputmode="numeric" lang="en" maxlength="4" placeholder="XXXX">
           </div>
           <span class="field__inline-error" id="extensionError" hidden></span>
         </div>
         <div class="field">
           <label for="email">البريد الإلكتروني</label>
           <div class="phone-input" dir="ltr">
-            <input id="email" name="email" type="text" required placeholder="اكتب بداية البريد الإلكتروني">
+            <input id="email" name="email" type="text" required autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="اكتب بداية البريد الإلكتروني">
             <span class="phone-input__suffix">@geosa.gov.sa</span>
           </div>
           <span class="field__inline-error" id="emailError" hidden></span>
@@ -159,6 +159,12 @@
       </button>
     </form>
   </section>
+
+  <!-- Brief transition shown while the card is being generated -->
+  <div id="loadingView" class="loading-card" hidden>
+    <span class="loading-spinner" aria-hidden="true"></span>
+    <p class="loading-text">جاري إنشاء البطاقة...</p>
+  </div>
 
   <!-- Card: generated from the form data -->
   <main id="cardView" class="card" hidden>

@@ -10,12 +10,12 @@ const fixedOrg = {
 };
 
 const TITLE_OPTIONS = [
-  { ar: "الدكتور", en: "Doctor" },
-  { ar: "الدكتورة", en: "Doctor" },
-  { ar: "الأستاذ", en: "Mister" },
-  { ar: "الأستاذة", en: "Miss" },
-  { ar: "المهندس", en: "Engineer" },
-  { ar: "المهندسة", en: "Engineer" }
+  { ar: "الدكتور", en: "Doctor", abbrAr: "د.", abbrEn: "Dr." },
+  { ar: "الدكتورة", en: "Doctor", abbrAr: "د.", abbrEn: "Dr." },
+  { ar: "الأستاذ", en: "Mister", abbrAr: "أ.", abbrEn: "Mr." },
+  { ar: "الأستاذة", en: "Miss", abbrAr: "أ.", abbrEn: "Ms." },
+  { ar: "المهندس", en: "Engineer", abbrAr: "م.", abbrEn: "Eng." },
+  { ar: "المهندسة", en: "Engineer", abbrAr: "م.", abbrEn: "Eng." }
 ];
 const OTHER_TITLE = "__other__";
 
@@ -72,6 +72,7 @@ const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(
 // Elements
 const formView = document.getElementById("formView");
 const cardView = document.getElementById("cardView");
+const loadingView = document.getElementById("loadingView");
 const cardForm = document.getElementById("cardForm");
 const formError = document.getElementById("formError");
 
@@ -126,10 +127,22 @@ const EMAIL_LOCAL_ONLY = /[^a-zA-Z._-]/g;
 const EMAIL_LOCAL_ONLY_MESSAGE = "يحتوي على أحرف إنجليزية و(-_.) فقط";
 const emailErrorEl = document.getElementById("emailError");
 
-function restrictInput(el, pattern, message, errorEl) {
+// Mobile keyboards (especially with an Arabic locale) often type
+// Arabic-Indic digits (٠-٩) or Extended Arabic-Indic (۰-۹) instead of
+// Western ones — convert those to plain 0-9 before any digits-only check.
+function toWesternDigits(str) {
+  return str.replace(/[٠-٩۰-۹]/g, (d) => {
+    const code = d.codePointAt(0);
+    if (code >= 0x0660 && code <= 0x0669) return String(code - 0x0660);
+    return String(code - 0x06f0);
+  });
+}
+
+function restrictInput(el, pattern, message, errorEl, transform) {
   let hideTimer = null;
   el.addEventListener("input", () => {
-    const filtered = el.value.replace(pattern, "");
+    const source = transform ? transform(el.value) : el.value;
+    const filtered = source.replace(pattern, "");
     if (filtered !== el.value) {
       el.value = filtered;
       errorEl.textContent = message;
@@ -148,9 +161,9 @@ restrictInput(titleArCustomInput, ARABIC_ONLY, ARABIC_ONLY_MESSAGE, document.get
 restrictInput(nameEnInput, ENGLISH_ONLY, ENGLISH_ONLY_MESSAGE, document.getElementById("nameEnError"));
 restrictInput(deptEnInput, ENGLISH_ONLY, ENGLISH_ONLY_MESSAGE, document.getElementById("deptEnError"));
 restrictInput(titleEnCustomInput, ENGLISH_ONLY, ENGLISH_ONLY_MESSAGE, document.getElementById("titleEnCustomError"));
-restrictInput(mobileInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, mobileErrorEl);
-restrictInput(workPhoneInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, workPhoneErrorEl);
-restrictInput(extensionInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, extensionErrorEl);
+restrictInput(mobileInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, mobileErrorEl, toWesternDigits);
+restrictInput(workPhoneInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, workPhoneErrorEl, toWesternDigits);
+restrictInput(extensionInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, extensionErrorEl, toWesternDigits);
 restrictInput(emailInput, EMAIL_LOCAL_ONLY, EMAIL_LOCAL_ONLY_MESSAGE, emailErrorEl);
 
 function validatePhoneFormat(input, pattern, message, errorEl, required) {
@@ -667,7 +680,7 @@ function showCard() {
   applyLanguage(currentLang);
 }
 
-cardForm.addEventListener("submit", (e) => {
+cardForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const mobileOk = validateMobileFormat();
@@ -732,6 +745,11 @@ cardForm.addEventListener("submit", (e) => {
   formError.hidden = true;
   cardData = data;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+  formView.hidden = true;
+  loadingView.hidden = false;
+  await new Promise((resolve) => setTimeout(resolve, 700));
+  loadingView.hidden = true;
   showCard();
 });
 
@@ -786,10 +804,20 @@ function applyLanguage(lang) {
   localStorage.setItem(LANG_KEY, lang);
 }
 
+// Contact apps conventionally show a short prefix (e.g. "Dr. Jane Doe"),
+// so the saved vCard abbreviates the title even though the card display
+// keeps the full word — matches known title options only, not custom ones.
+function abbreviateTitle(title, lang) {
+  const opt = TITLE_OPTIONS.find((o) => o[lang] === title);
+  if (!opt) return title;
+  return lang === "ar" ? opt.abbrAr : opt.abbrEn;
+}
+
 function buildVCard(lang) {
   const d = cardData[lang];
   const addr = fixedAddress[lang];
   const org = fixedOrg[lang];
+  const vCardTitle = abbreviateTitle(d.title, lang);
   const nameParts = d.name.split(" ").filter(Boolean);
   const firstName = nameParts[0] || d.name;
   const lastName = nameParts.slice(1).join(" ") || d.name;
@@ -797,8 +825,8 @@ function buildVCard(lang) {
   const lines = [
     "BEGIN:VCARD",
     "VERSION:3.0",
-    `N:${lastName};${firstName};;${d.title};`,
-    `FN:${d.title} ${d.name}`,
+    `N:${lastName};${firstName};;${vCardTitle};`,
+    `FN:${vCardTitle} ${d.name}`,
     `TITLE:${d.dept}`,
     `ORG:${org}`,
     `TEL;TYPE=CELL:${cardData.mobile}`
@@ -859,15 +887,31 @@ saveImageBtn.addEventListener("click", async () => {
       backgroundColor: null,
       useCORS: true
     });
-    const dataUrl = canvas.toDataURL("image/png");
+    const fileName = `${cardData[currentLang].name.replace(/\s+/g, "-")}-card.png`;
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    const file = new File([blob], fileName, { type: "image/png" });
 
+    // A plain <a download> link always lands in the Downloads folder. On
+    // phones, sharing the file through the native share sheet instead lets
+    // the user pick "Save to Photos"/gallery directly.
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file] });
+        return;
+      } catch (shareErr) {
+        if (shareErr && shareErr.name === "AbortError") return;
+        // Any other share failure falls through to the download link below.
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    const name = cardData[currentLang].name.replace(/\s+/g, "-");
-    link.href = dataUrl;
-    link.download = `${name}-card.png`;
+    link.href = url;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   } finally {
     editBtn.hidden = editWasHidden;
     langToggle.hidden = langWasHidden;
