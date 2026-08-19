@@ -60,13 +60,7 @@ const translations = {
   }
 };
 
-const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">' +
-  '<rect width="100" height="100" fill="#eef2f3"/>' +
-  '<circle cx="50" cy="38" r="18" fill="#c7d3d5"/>' +
-  '<path d="M50 60c-22 0-34 12-34 26v6h68v-6c0-14-12-26-34-26z" fill="#c7d3d5"/>' +
-  '</svg>'
-);
+const DEFAULT_AVATAR = "assets/avatar-none.jpg";
 
 // Elements
 const formView = document.getElementById("formView");
@@ -223,11 +217,18 @@ function updateEnglishFieldsVisibility() {
 
 enableEnglishToggle.addEventListener("change", updateEnglishFieldsVisibility);
 
-const editBtn = document.getElementById("editBtn");
 const langToggle = document.getElementById("langToggle");
 const saveContactBtn = document.getElementById("saveContactBtn");
 const saveImageBtn = document.getElementById("saveImageBtn");
 const cardActions = document.querySelector(".card__actions");
+
+const qrThumbBtn = document.getElementById("qrThumbBtn");
+const qrCanvasSmall = document.getElementById("qrCanvasSmall");
+const qrCanvasLarge = document.getElementById("qrCanvasLarge");
+const qrModal = document.getElementById("qrModal");
+const qrModalBackdrop = document.getElementById("qrModalBackdrop");
+const qrModalCloseBtn = document.getElementById("qrModalCloseBtn");
+const qrShareBtn = document.getElementById("qrShareBtn");
 
 const cardAvatar = document.getElementById("cardAvatar");
 const cardJobTitle = document.getElementById("cardJobTitle");
@@ -696,13 +697,12 @@ cardForm.addEventListener("submit", async (e) => {
     workPhone: workPhoneInput.value.trim() ? MOBILE_PREFIX + workPhoneInput.value.trim() : "",
     extension: extensionInput.value.trim(),
     email: emailInput.value.trim() ? emailInput.value.trim() + EMAIL_DOMAIN : "",
-    photo: pendingPhoto
+    photo: pendingPhoto || DEFAULT_AVATAR
   };
 
   // Highlight every invalid field in red, in the same top-to-bottom order as
   // the form itself, so focus lands on whichever one the user hits first.
   const fieldChecks = [
-    { invalid: !pendingPhoto, el: photoUpload, focusEl: photoInput },
     { invalid: !data.ar.title, el: titleArSelect.value === OTHER_TITLE ? titleArCustomInput : titleArSelect.trigger },
     { invalid: !data.ar.name, el: nameArInput },
     { invalid: !data.ar.dept, el: deptArInput },
@@ -742,7 +742,14 @@ cardForm.addEventListener("submit", async (e) => {
   showCard();
 });
 
-editBtn.addEventListener("click", showForm);
+// Displays "+966 50 000 0000" (2-3-4 grouping) while the underlying stored
+// value (used for tel: links and the vCard) stays a plain unspaced number.
+function formatPhoneDisplay(fullNumber) {
+  if (!fullNumber || !fullNumber.startsWith(MOBILE_PREFIX)) return fullNumber;
+  const local = fullNumber.slice(MOBILE_PREFIX.length);
+  if (local.length !== 9) return fullNumber;
+  return `${MOBILE_PREFIX} ${local.slice(0, 2)} ${local.slice(2, 5)} ${local.slice(5, 9)}`;
+}
 
 function applyLanguage(lang) {
   if (!cardData) return;
@@ -766,12 +773,12 @@ function applyLanguage(lang) {
   });
 
   mobileRow.href = `tel:${cardData.mobile}`;
-  mobileValue.textContent = cardData.mobile;
+  mobileValue.textContent = formatPhoneDisplay(cardData.mobile);
 
   if (cardData.workPhone) {
     workPhoneRow.hidden = false;
     workPhoneRow.href = `tel:${cardData.workPhone}`;
-    workPhoneValue.textContent = cardData.workPhone;
+    workPhoneValue.textContent = formatPhoneDisplay(cardData.workPhone);
   } else {
     workPhoneRow.hidden = true;
   }
@@ -791,6 +798,8 @@ function applyLanguage(lang) {
 
   currentLang = lang;
   localStorage.setItem(LANG_KEY, lang);
+
+  updateQRCodes();
 }
 
 // Contact apps conventionally show a short prefix (e.g. "Dr. Jane Doe"),
@@ -835,6 +844,98 @@ function buildVCard(lang) {
   return lines.join("\r\n");
 }
 
+function renderQRToCanvas(canvas, text, sizePx) {
+  if (typeof qrcode !== "function") return;
+
+  // The library's default byte-encoder truncates non-Latin1 characters,
+  // which would corrupt Arabic text — switch to the UTF-8-safe encoder it
+  // ships (but doesn't enable by default) before generating anything. The
+  // vendor script loads deferred, so this can't be set at module scope;
+  // it has to happen here, right before first use.
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
+
+  const qr = qrcode(0, "M");
+  qr.addData(text);
+  qr.make();
+
+  const moduleCount = qr.getModuleCount();
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = sizePx * ratio;
+  canvas.height = sizePx * ratio;
+  canvas.style.width = `${sizePx}px`;
+  canvas.style.height = `${sizePx}px`;
+
+  const cellSize = (sizePx * ratio) / moduleCount;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#0c3138";
+  for (let row = 0; row < moduleCount; row++) {
+    for (let col = 0; col < moduleCount; col++) {
+      if (qr.isDark(row, col)) {
+        ctx.fillRect(col * cellSize, row * cellSize, Math.ceil(cellSize), Math.ceil(cellSize));
+      }
+    }
+  }
+}
+
+function updateQRCodes() {
+  if (!cardData) return;
+  const vCardText = buildVCard(currentLang);
+  renderQRToCanvas(qrCanvasSmall, vCardText, 40);
+  renderQRToCanvas(qrCanvasLarge, vCardText, 220);
+}
+
+function openQRModal() {
+  updateQRCodes();
+  qrModal.hidden = false;
+}
+
+function closeQRModal() {
+  qrModal.hidden = true;
+}
+
+qrThumbBtn.addEventListener("click", openQRModal);
+qrModalCloseBtn.addEventListener("click", closeQRModal);
+qrModalBackdrop.addEventListener("click", closeQRModal);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !qrModal.hidden) closeQRModal();
+});
+
+// Plain <a download> links are unreliable on mobile browsers — some (notably
+// mobile Safari) can navigate to/open the blob instead of saving it, which
+// looks like the page itself was left. The native share sheet doesn't have
+// that problem (it's an overlay, never a navigation), and its "Save Image"
+// option covers the "just save it" intent just as well, so both buttons
+// route through it first and only fall back to a plain download when
+// sharing isn't supported at all (desktop browsers).
+function exportCanvasImage(canvas, filename) {
+  canvas.toBlob(async (blob) => {
+    const file = new File([blob], filename, { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file] });
+        return;
+      } catch (shareErr) {
+        if (shareErr && shareErr.name === "AbortError") return;
+      }
+    }
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, "image/png");
+}
+
+qrShareBtn.addEventListener("click", () => {
+  const name = cardData[currentLang].name.replace(/\s+/g, "-");
+  exportCanvasImage(qrCanvasLarge, `${name}-qr.png`);
+});
+
 saveContactBtn.addEventListener("click", () => {
   const d = cardData[currentLang];
   const vCardText = buildVCard(currentLang);
@@ -859,11 +960,9 @@ saveImageBtn.addEventListener("click", async () => {
 
   saveImageBtn.disabled = true;
 
-  // Hide the interactive chrome (edit icon, language toggle, action buttons)
-  // so the exported image only shows the shareable card face.
-  const editWasHidden = editBtn.hidden;
+  // Hide the interactive chrome (language toggle, action buttons) so the
+  // exported image only shows the shareable card face.
   const langWasHidden = langToggle.hidden;
-  editBtn.hidden = true;
   langToggle.hidden = true;
   cardActions.style.display = "none";
   cardView.classList.add("exporting");
@@ -902,7 +1001,6 @@ saveImageBtn.addEventListener("click", async () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   } finally {
-    editBtn.hidden = editWasHidden;
     langToggle.hidden = langWasHidden;
     cardActions.style.display = "";
     cardView.classList.remove("exporting");

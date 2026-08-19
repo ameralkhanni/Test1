@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="vendor/html2canvas.min.js" defer></script>
+<script src="vendor/qrcode-generator.js" defer></script>
 </head>
 <body>
 
@@ -170,9 +171,6 @@
   <main id="cardView" class="card" hidden>
 
     <header class="card__header">
-      <button id="editBtn" class="icon-toggle icon-toggle--edit" type="button" aria-label="Edit info">
-        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-      </button>
       <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch language">EN</button>
       <div class="card__logo">
         <img src="assets/logo.webp" alt="شعار الجهة" class="card__logo-icon i18n-logo">
@@ -188,6 +186,13 @@
         <h1 class="card__name" id="cardName"></h1>
         <p class="card__dept" id="cardDept"></p>
       </div>
+      <button type="button" id="qrThumbBtn" class="card__qr" aria-label="عرض ومشاركة رمز QR">
+        <canvas id="qrCanvasSmall"></canvas>
+        <span class="card__qr-label">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 16V7.85l-2.6 2.6L7 9l5-5 5 5-1.4 1.45-2.6-2.6V16Zm-5 4q-.825 0-1.412-.587Q4 18.825 4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413Q18.825 20 18 20Z"/></svg>
+          مشاركة
+        </span>
+      </button>
     </section>
 
     <section class="card__contact">
@@ -254,6 +259,24 @@
     </footer>
 
   </main>
+
+  <!-- Enlarged QR code shown when the small QR badge on the card is tapped -->
+  <div id="qrModal" class="qr-modal" hidden>
+    <div class="qr-modal__backdrop" id="qrModalBackdrop"></div>
+    <div class="qr-modal__panel">
+      <button type="button" id="qrModalCloseBtn" class="qr-modal__close" aria-label="إغلاق">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4l5.6 5.6 1.4-1.4L13.4 12 19 6.4 17.6 5 12 10.6z"/></svg>
+      </button>
+      <canvas id="qrCanvasLarge" class="qr-modal__canvas"></canvas>
+      <p class="qr-modal__hint">امسح الرمز لحفظ بيانات التواصل مباشرة</p>
+      <div class="qr-modal__actions">
+        <button type="button" id="qrShareBtn" class="btn-secondary">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 16V7.85l-2.6 2.6L7 9l5-5 5 5-1.4 1.45-2.6-2.6V16Zm-5 4q-.825 0-1.412-.587Q4 18.825 4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413Q18.825 20 18 20Z"/></svg>
+          <span>مشاركة</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
 </div>
 
