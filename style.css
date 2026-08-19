@@ -29,6 +29,25 @@ body {
   align-items: flex-start;
 }
 
+.app {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .card {
   width: 100%;
   max-width: 440px;
@@ -74,6 +93,16 @@ body {
   .card__footer {
     animation: none;
   }
+}
+
+/* Forces every entrance animation to its settled end-state before the card
+   is captured as an image — html2canvas snapshots computed animation
+   timing unreliably and can render mid-animation (near-invisible) frames. */
+.card.exporting,
+.card.exporting * {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 @media (min-width: 480px) {
@@ -123,6 +152,42 @@ body {
 
 .lang-toggle:active {
   transform: scale(0.95);
+}
+
+.icon-toggle {
+  position: absolute;
+  top: 14px;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.icon-toggle svg {
+  width: 15px;
+  height: 15px;
+  fill: #ffffff;
+}
+
+.icon-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.icon-toggle:active {
+  transform: scale(0.95);
+}
+
+.icon-toggle--edit {
+  right: 14px;
 }
 
 .card__logo {
@@ -308,6 +373,44 @@ body {
   fill: #ffffff;
 }
 
+.btn-secondary {
+  width: 100%;
+  border: 1.5px solid var(--btn-blue);
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--btn-blue);
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 13px 18px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(110, 169, 194, 0.08);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-secondary svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--btn-blue);
+}
+
 /* Footer */
 .card__footer {
   margin-top: auto;
@@ -332,4 +435,472 @@ body {
   font-size: 8.5px;
   color: #c1c9ca;
   letter-spacing: 0.02em;
+}
+
+/* Intake form */
+.form-card {
+  width: 100%;
+  max-width: 440px;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: #ffffff;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+  animation: card-in 0.5s ease both;
+}
+
+@media (min-width: 480px) {
+  .form-card {
+    min-height: auto;
+    border-radius: 28px;
+    overflow: hidden;
+    margin: 32px 12px;
+  }
+}
+
+.form-card__header {
+  background-color: var(--teal-dark);
+  background-image: url('assets/pattern-bg.png');
+  background-size: 220px auto;
+  background-repeat: repeat;
+  padding: 30px 24px 26px;
+  text-align: center;
+}
+
+.form-card__logo {
+  height: 44px;
+  width: auto;
+  margin-bottom: 14px;
+}
+
+.form-card__heading {
+  margin: 0 0 6px;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.form-card__subtitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+}
+
+.form-card__body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.field--photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.field__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.photo-hint {
+  margin: -4px 0 0;
+  font-size: 11.5px;
+  color: #9aa7a9;
+  text-align: center;
+  max-width: 240px;
+}
+
+.photo-upload {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 2px dashed #c7d3d5;
+  background: #f5f8f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.photo-upload:hover {
+  border-color: var(--blue-accent);
+}
+
+.photo-upload__preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-upload__placeholder {
+  font-size: 30px;
+  font-weight: 400;
+  color: #b7c3c5;
+}
+
+.photo-upload__preview {
+  touch-action: none;
+}
+
+.photo-upload__preview.is-adjusting {
+  cursor: grab;
+}
+
+.photo-upload__preview.is-adjusting.is-dragging {
+  cursor: grabbing;
+}
+
+.photo-upload-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.photo-edit-btn {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background: var(--blue-accent);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(12, 49, 56, 0.25);
+}
+
+.photo-edit-btn svg {
+  width: 13px;
+  height: 13px;
+  fill: #ffffff;
+}
+
+.photo-adjust {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: -2px;
+}
+
+.photo-adjust__zoom {
+  width: 160px;
+  accent-color: var(--blue-accent);
+}
+
+.photo-adjust__hint {
+  margin: 0;
+  font-size: 11px;
+  color: #9aa7a9;
+  text-align: center;
+  max-width: 220px;
+}
+
+.photo-adjust__done {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--btn-blue);
+  border: none;
+  border-radius: 999px;
+  padding: 6px 22px;
+  cursor: pointer;
+}
+
+.field-group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-row__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.switch__track {
+  position: absolute;
+  inset: 0;
+  background: #c7d3d5;
+  border-radius: 999px;
+  transition: background-color 0.15s ease;
+}
+
+.switch__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+
+.switch input:checked ~ .switch__track {
+  background: var(--blue-accent);
+}
+
+.switch input:checked ~ .switch__track .switch__thumb {
+  transform: translateX(18px);
+}
+
+.field-group__hint {
+  margin: -8px 0 0;
+  font-size: 11.5px;
+  color: #9aa7a9;
+  line-height: 1.5;
+}
+
+.english-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field-group__title {
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--teal-mid);
+  border-bottom: 1px solid #e4e9ea;
+  padding-bottom: 8px;
+  margin-bottom: 2px;
+  width: 100%;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.field__hint {
+  font-weight: 400;
+  color: #9aa7a9;
+}
+
+.field input {
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--text-dark);
+  background: #f5f8f9;
+  border: 1px solid #e4e9ea;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.field input:focus {
+  border-color: var(--blue-accent);
+  background: #ffffff;
+}
+
+/* Custom dropdown (replaces native <select> so the open list matches the theme) */
+.dropdown {
+  position: relative;
+}
+
+.dropdown__trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--text-dark);
+  background: #f5f8f9;
+  border: 1px solid #e4e9ea;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  outline: none;
+  cursor: pointer;
+  text-align: start;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.dropdown__trigger:focus,
+.dropdown__trigger[aria-expanded="true"] {
+  border-color: var(--blue-accent);
+  background: #ffffff;
+}
+
+.dropdown__value.is-placeholder {
+  color: #9aa7a9;
+}
+
+.dropdown__arrow {
+  width: 15px;
+  height: 15px;
+  fill: var(--blue-accent);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.dropdown__trigger[aria-expanded="true"] .dropdown__arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown__list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e4e9ea;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 28px rgba(12, 49, 56, 0.14);
+}
+
+.dropdown__option {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.dropdown__option:hover,
+.dropdown__option:focus {
+  background: #f2f7f8;
+  outline: none;
+}
+
+.dropdown__option.is-selected {
+  background: var(--btn-blue);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.field__inline-error {
+  font-size: 12px;
+  color: #b3261e;
+}
+
+.phone-input {
+  display: flex;
+  align-items: stretch;
+  background: #f5f8f9;
+  border: 1px solid #e4e9ea;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.phone-input:focus-within {
+  border-color: var(--blue-accent);
+  background: #ffffff;
+}
+
+.phone-input__prefix {
+  display: flex;
+  align-items: center;
+  padding: 12px 12px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--teal-mid);
+  background: #eef2f3;
+  border-inline-end: 1px solid #e4e9ea;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.phone-input input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--text-dark);
+  padding: 12px 14px;
+  outline: none;
+}
+
+.phone-input__suffix {
+  display: flex;
+  align-items: center;
+  padding: 12px 12px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--teal-mid);
+  background: #eef2f3;
+  border-inline-start: 1px solid #e4e9ea;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.form-error {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: #fdeceb;
+  color: #b3261e;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Declared last so a red "required" border always wins, even while the
+   invalid field is focused (:focus / :focus-within / [aria-expanded]). */
+.field input.is-invalid,
+.phone-input.is-invalid,
+.dropdown__trigger.is-invalid,
+.photo-upload.is-invalid {
+  border-color: #b3261e;
 }

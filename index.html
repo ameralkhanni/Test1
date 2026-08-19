@@ -3,99 +3,253 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>حسن بن محمد الأمير  | البطاقة الرقمية</title>
+<title>البطاقة الرقمية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="vendor/html2canvas.min.js" defer></script>
 </head>
 <body>
 
-<main class="card">
+<div class="app">
 
-  <!-- Header -->
-  <header class="card__header">
-    <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch language">EN</button>
-    <div class="card__logo">
-      <img src="assets/logo.webp" alt="شعار الجهة" class="card__logo-icon i18n-logo">
-    </div>
-  </header>
+  <!-- Form: employee fills in their own data -->
+  <section id="formView" class="form-card">
+    <header class="form-card__header">
+      <img src="assets/logo.webp" alt="شعار الجهة" class="form-card__logo">
+      <h1 class="form-card__heading">إنشاء البطاقة الرقمية</h1>
+      <p class="form-card__subtitle">يُرجى تعبئة البيانات التالية لإصدار بطاقتك التعريفية الرقمية فورًا</p>
+    </header>
 
-  <!-- Identity -->
-  <section class="card__identity">
-    <div class="card__avatar">
-      <img src="assets/avatar.png" alt="الصورة الشخصية">
-    </div>
-    <div class="card__names">
-      <p class="card__title" data-i18n="jobTitle">الدكتور</p>
-      <h1 class="card__name" data-i18n="name">حسن بن محمد الأمير</h1>
-      <p class="card__dept" data-i18n="department">مساعد الرئيس لقطاع التقنيات والحلول</p>
-    </div>
+    <form id="cardForm" class="form-card__body" novalidate>
+
+      <div class="field field--photo">
+        <span class="field__label">الصورة الشخصية</span>
+        <p class="photo-hint">يُفضّل صورة شخصية حديثة وواضحة، بخلفية بيضاء أو شفافة</p>
+        <div class="photo-upload-wrap">
+          <label for="photoInput" class="photo-upload">
+            <img id="photoPreview" class="photo-upload__preview" alt="" hidden>
+            <span id="photoPlaceholder" class="photo-upload__placeholder">+</span>
+          </label>
+          <button type="button" id="photoEditBtn" class="photo-edit-btn" hidden aria-label="تعديل الصورة">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </button>
+        </div>
+        <input type="file" id="photoInput" accept="image/*" class="visually-hidden">
+        <div id="photoAdjustPanel" class="photo-adjust" hidden>
+          <input type="range" id="photoZoom" class="photo-adjust__zoom" min="100" max="250" value="100" step="1" aria-label="تكبير الصورة">
+          <p class="photo-adjust__hint">اسحب الصورة لتحديد الموضع، وحرّك الشريط للتكبير</p>
+          <button type="button" id="photoAdjustDone" class="photo-adjust__done">تم</button>
+        </div>
+      </div>
+
+      <fieldset class="field-group">
+        <legend class="field-group__title">البيانات بالعربي</legend>
+        <div class="field">
+          <label for="titleAr">المسمى / اللقب</label>
+          <div class="dropdown" id="titleArDropdown">
+            <button type="button" id="titleAr" class="dropdown__trigger" aria-haspopup="listbox" aria-expanded="false">
+              <span class="dropdown__value"></span>
+              <svg class="dropdown__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+            </button>
+            <ul class="dropdown__list" id="titleArList" role="listbox" hidden></ul>
+          </div>
+        </div>
+        <div class="field" id="titleArCustomField" hidden>
+          <label for="titleArCustom">اكتب اللقب</label>
+          <input id="titleArCustom" name="titleArCustom" type="text" placeholder="اكتب اللقب">
+          <span class="field__inline-error" id="titleArCustomError" hidden></span>
+        </div>
+        <div class="field">
+          <label for="nameAr">الاسم الكامل</label>
+          <input id="nameAr" name="nameAr" type="text" required placeholder="اكتب الاسم الكامل">
+          <span class="field__inline-error" id="nameArError" hidden></span>
+        </div>
+        <div class="field">
+          <label for="deptAr">المسمى الوظيفي</label>
+          <input id="deptAr" name="deptAr" type="text" required placeholder="اكتب المسمى الوظيفي">
+          <span class="field__inline-error" id="deptArError" hidden></span>
+        </div>
+      </fieldset>
+
+      <fieldset class="field-group">
+        <legend class="field-group__title">البيانات بالإنجليزي</legend>
+
+        <div class="toggle-row">
+          <label class="switch">
+            <input type="checkbox" id="enableEnglish" checked>
+            <span class="switch__track"><span class="switch__thumb"></span></span>
+          </label>
+          <span class="toggle-row__label">تفعيل النسخة الإنجليزية</span>
+        </div>
+        <p class="field-group__hint">
+          البطاقة تعرض بالعربي والإنجليزي مع إمكانية تبديل اللغة. لو عطّلت هذا الخيار، بطاقتك تصدر بالعربي فقط بدون زر تبديل لغة، ولا حاجة لتعبئة الحقول التالية.
+        </p>
+
+        <div id="englishFields" class="english-fields">
+          <div class="field">
+            <label for="titleEn">المسمى / اللقب بالإنجليزي</label>
+            <div class="dropdown" id="titleEnDropdown" dir="ltr">
+              <button type="button" id="titleEn" class="dropdown__trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="dropdown__value"></span>
+                <svg class="dropdown__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+              </button>
+              <ul class="dropdown__list" id="titleEnList" role="listbox" hidden></ul>
+            </div>
+          </div>
+          <div class="field" id="titleEnCustomField" hidden>
+            <label for="titleEnCustom">اكتب اللقب بالإنجليزي</label>
+            <input id="titleEnCustom" name="titleEnCustom" type="text" dir="ltr" placeholder="اكتب اللقب بالإنجليزي">
+            <span class="field__inline-error" id="titleEnCustomError" hidden></span>
+          </div>
+          <div class="field">
+            <label for="nameEn">الاسم الكامل بالإنجليزي</label>
+            <input id="nameEn" name="nameEn" type="text" dir="ltr" placeholder="اكتب الاسم الكامل بالإنجليزي">
+            <span class="field__inline-error" id="nameEnError" hidden></span>
+          </div>
+          <div class="field">
+            <label for="deptEn">المسمى الوظيفي بالإنجليزي</label>
+            <input id="deptEn" name="deptEn" type="text" dir="ltr" placeholder="اكتب المسمى الوظيفي بالإنجليزي">
+            <span class="field__inline-error" id="deptEnError" hidden></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="field-group">
+        <legend class="field-group__title">معلومات التواصل</legend>
+        <div class="field">
+          <label for="mobile">رقم الجوال</label>
+          <div class="phone-input" dir="ltr">
+            <span class="phone-input__prefix">+966</span>
+            <input id="mobile" name="mobile" type="tel" required inputmode="numeric" maxlength="9" placeholder="5XXXXXXXX">
+          </div>
+          <span class="field__inline-error" id="mobileError" hidden></span>
+        </div>
+        <div class="field">
+          <label for="workPhone">هاتف العمل <span class="field__hint">(اختياري)</span></label>
+          <div class="phone-input" dir="ltr">
+            <span class="phone-input__prefix">+966</span>
+            <input id="workPhone" name="workPhone" type="tel" inputmode="numeric" maxlength="9" placeholder="1XXXXXXXX">
+          </div>
+          <span class="field__inline-error" id="workPhoneError" hidden></span>
+        </div>
+        <div class="field">
+          <label for="extension">رقم التحويلة <span class="field__hint">(اختياري)</span></label>
+          <div class="phone-input" dir="ltr">
+            <span class="phone-input__prefix">920000427،</span>
+            <input id="extension" name="extension" type="tel" inputmode="numeric" maxlength="4" placeholder="XXXX">
+          </div>
+          <span class="field__inline-error" id="extensionError" hidden></span>
+        </div>
+        <div class="field">
+          <label for="email">البريد الإلكتروني</label>
+          <div class="phone-input" dir="ltr">
+            <input id="email" name="email" type="text" required placeholder="اكتب بداية البريد الإلكتروني">
+            <span class="phone-input__suffix">@geosa.gov.sa</span>
+          </div>
+          <span class="field__inline-error" id="emailError" hidden></span>
+        </div>
+      </fieldset>
+
+      <p id="formError" class="form-error" hidden></p>
+
+      <button type="submit" class="btn-primary">
+        <span>إنشاء البطاقة الرقمية</span>
+      </button>
+    </form>
   </section>
 
-  <!-- Contact info -->
-  <section class="card__contact">
-    <a class="contact-row" href="tel:+966555585842">
-      <span class="contact-row__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
-      </span>
-      <span class="contact-row__text">
-        <span class="contact-row__label" data-i18n="phoneLabel">رقم الجوال</span>
-        <span class="contact-row__value" dir="ltr">+966 55 558 5842</span>
-      </span>
-    </a>
-    <a class="contact-row" href="tel:+966115138080">
-      <span class="contact-row__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
-      </span>
-      <span class="contact-row__text">
-        <span class="contact-row__label" data-i18n="phone2Label">هاتف العمل</span>
-        <span class="contact-row__value" dir="ltr">+966 11 513 8080</span>
-      </span>
-    </a>
-    <a class="contact-row" href="tel:920000427">
-      <span class="contact-row__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
-      </span>
-      <span class="contact-row__text">
-        <span class="contact-row__label" data-i18n="phone3Label">الرقم الموحد</span>
-        <span class="contact-row__value" dir="ltr">920000427, 8080</span>
-      </span>
-    </a>
-    <a class="contact-row" href="mailto:h.alameer@geosa.gov.sa">
-      <span class="contact-row__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm16 4.24-7.55 5.05a1 1 0 0 1-1.1 0L4 8.24V18h16zM4.5 6l7.5 5 7.5-5z"/></svg>
-      </span>
-      <span class="contact-row__text">
-        <span class="contact-row__label" data-i18n="emailLabel">البريد الإلكتروني</span>
-        <span class="contact-row__value" dir="ltr">h.alameer@geosa.gov.sa</span>
-      </span>
-    </a>
-    <a class="contact-row" href="https://maps.app.goo.gl/mS3fYUgxKsrDLy7a7?g_st=ic" target="_blank" rel="noopener">
-      <span class="contact-row__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
-      </span>
-      <span class="contact-row__text">
-        <span class="contact-row__label" data-i18n="addressLabel">العنوان</span>
-        <span class="contact-row__value contact-row__value--wrap" data-i18n="addressValue">الرياض، المملكة العربية السعودية
-رقم 64، العليا، الرمز البريدي 12213</span>
-      </span>
-    </a>
-  </section>
+  <!-- Card: generated from the form data -->
+  <main id="cardView" class="card" hidden>
 
-  <!-- Actions -->
-  <section class="card__actions">
-    <button id="saveContactBtn" class="btn-primary" type="button">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5z"/><path d="M19 11h2v2h-2v2h-2v-2h-2v-2h2V9h2z"/></svg>
-      <span data-i18n="addContact">إضافة إلى جهات الاتصال</span>
-    </button>
-  </section>
+    <header class="card__header">
+      <button id="editBtn" class="icon-toggle icon-toggle--edit" type="button" aria-label="Edit info">
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      </button>
+      <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch language">EN</button>
+      <div class="card__logo">
+        <img src="assets/logo.webp" alt="شعار الجهة" class="card__logo-icon i18n-logo">
+      </div>
+    </header>
 
-  <footer class="card__footer">
-    <span data-i18n="footerOrg">الهيئة العامة للمساحة والمعلومات الجيومكانية</span>
-  </footer>
+    <section class="card__identity">
+      <div class="card__avatar">
+        <img id="cardAvatar" src="" alt="الصورة الشخصية">
+      </div>
+      <div class="card__names">
+        <p class="card__title" id="cardJobTitle"></p>
+        <h1 class="card__name" id="cardName"></h1>
+        <p class="card__dept" id="cardDept"></p>
+      </div>
+    </section>
 
-</main>
+    <section class="card__contact">
+      <a class="contact-row" id="mobileRow" href="#">
+        <span class="contact-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
+        </span>
+        <span class="contact-row__text">
+          <span class="contact-row__label" data-i18n="phoneLabel"></span>
+          <span class="contact-row__value" id="mobileValue" dir="ltr"></span>
+        </span>
+      </a>
+      <a class="contact-row" id="workPhoneRow" href="#" hidden>
+        <span class="contact-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
+        </span>
+        <span class="contact-row__text">
+          <span class="contact-row__label" data-i18n="phone2Label"></span>
+          <span class="contact-row__value" id="workPhoneValue" dir="ltr"></span>
+        </span>
+      </a>
+      <a class="contact-row" href="tel:920000427">
+        <span class="contact-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
+        </span>
+        <span class="contact-row__text">
+          <span class="contact-row__label" data-i18n="phone3Label"></span>
+          <span class="contact-row__value" id="unifiedNumberValue" dir="ltr"></span>
+        </span>
+      </a>
+      <a class="contact-row" id="emailRow" href="#">
+        <span class="contact-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm16 4.24-7.55 5.05a1 1 0 0 1-1.1 0L4 8.24V18h16zM4.5 6l7.5 5 7.5-5z"/></svg>
+        </span>
+        <span class="contact-row__text">
+          <span class="contact-row__label" data-i18n="emailLabel"></span>
+          <span class="contact-row__value" id="emailValue" dir="ltr"></span>
+        </span>
+      </a>
+      <a class="contact-row" href="https://maps.app.goo.gl/mS3fYUgxKsrDLy7a7?g_st=ic" target="_blank" rel="noopener">
+        <span class="contact-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+        </span>
+        <span class="contact-row__text">
+          <span class="contact-row__label" data-i18n="addressLabel"></span>
+          <span class="contact-row__value contact-row__value--wrap" data-i18n="addressValue"></span>
+        </span>
+      </a>
+    </section>
+
+    <section class="card__actions">
+      <button id="saveContactBtn" class="btn-primary" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5z"/><path d="M19 11h2v2h-2v2h-2v-2h-2v-2h2V9h2z"/></svg>
+        <span data-i18n="addContact">إضافة إلى جهات الاتصال</span>
+      </button>
+      <button id="saveImageBtn" class="btn-secondary" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3.17L14 5H10L8.17 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2zm7-2a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/></svg>
+        <span data-i18n="saveImage">حفظ البطاقة كصورة</span>
+      </button>
+    </section>
+
+    <footer class="card__footer">
+      <span data-i18n="footerOrg">الهيئة العامة للمساحة والمعلومات الجيومكانية</span>
+    </footer>
+
+  </main>
+
+</div>
 
 <script src="script.js"></script>
 </body>
