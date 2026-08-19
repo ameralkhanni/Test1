@@ -1,4 +1,3 @@
-const STORAGE_KEY = "geosaCardData";
 const LANG_KEY = "geosaCardLang";
 
 // Fixed, organization-wide values (not asked in the form).
@@ -242,7 +241,7 @@ const unifiedNumberValue = document.getElementById("unifiedNumberValue");
 const emailRow = document.getElementById("emailRow");
 const emailValue = document.getElementById("emailValue");
 
-let cardData = loadCardData();
+let cardData = null;
 let currentLang = localStorage.getItem(LANG_KEY) || "ar";
 let pendingPhoto = null;
 
@@ -437,15 +436,6 @@ function setTitleFieldEn(select, customField, customInput, value) {
   } else {
     select.value = "";
     customField.hidden = true;
-  }
-}
-
-function loadCardData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (err) {
-    return null;
   }
 }
 
@@ -744,7 +734,6 @@ cardForm.addEventListener("submit", async (e) => {
 
   formError.hidden = true;
   cardData = data;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 
   formView.hidden = true;
   loadingView.hidden = false;
@@ -921,8 +910,4 @@ saveImageBtn.addEventListener("click", async () => {
   }
 });
 
-if (cardData) {
-  showCard();
-} else {
-  showForm();
-}
+showForm();
