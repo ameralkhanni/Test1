@@ -18,16 +18,21 @@
   <!-- Form: employee fills in their own data -->
   <section id="formView" class="form-card">
     <header class="form-card__header">
-      <img src="assets/logo.webp" alt="شعار الجهة" class="form-card__logo">
-      <h1 class="form-card__heading">إنشاء البطاقة الرقمية</h1>
-      <p class="form-card__subtitle">يُرجى تعبئة البيانات التالية لإصدار بطاقتك التعريفية الرقمية فورًا</p>
+      <div id="formLangToggle" class="lang-switch" dir="ltr" role="group" aria-label="Form language">
+        <span class="lang-switch__thumb" aria-hidden="true"></span>
+        <button type="button" class="lang-switch__option" data-lang="ar">AR</button>
+        <button type="button" class="lang-switch__option" data-lang="en">EN</button>
+      </div>
+      <img src="assets/logo.webp" alt="شعار الجهة" class="form-card__logo i18n-logo">
+      <h1 class="form-card__heading" data-i18n="formHeading">إنشاء البطاقة الرقمية</h1>
+      <p class="form-card__subtitle" data-i18n="formSubtitle">يُرجى تعبئة البيانات التالية لإصدار بطاقتك التعريفية الرقمية فورًا</p>
     </header>
 
     <form id="cardForm" class="form-card__body" novalidate>
 
       <div class="field field--photo">
-        <span class="field__label">الصورة الشخصية</span>
-        <p class="photo-hint">يُفضّل صورة شخصية حديثة وواضحة، بخلفية بيضاء أو شفافة</p>
+        <span class="field__label" data-i18n="photoLabel">الصورة الشخصية</span>
+        <p class="photo-hint" data-i18n="photoHint">يُفضّل صورة شخصية حديثة وواضحة، بخلفية بيضاء أو شفافة</p>
         <div class="photo-upload-wrap">
           <label for="photoInput" class="photo-upload">
             <img id="photoPreview" class="photo-upload__preview" alt="" hidden>
@@ -40,87 +45,44 @@
         <input type="file" id="photoInput" accept="image/*" class="visually-hidden">
         <div id="photoAdjustPanel" class="photo-adjust" hidden>
           <input type="range" id="photoZoom" class="photo-adjust__zoom" min="100" max="250" value="100" step="1" aria-label="تكبير الصورة">
-          <p class="photo-adjust__hint">اسحب الصورة لتحديد الموضع، وحرّك الشريط للتكبير</p>
-          <button type="button" id="photoAdjustDone" class="photo-adjust__done">تم</button>
+          <p class="photo-adjust__hint" data-i18n="photoAdjustHint">اسحب الصورة لتحديد الموضع، وحرّك الشريط للتكبير</p>
+          <button type="button" id="photoAdjustDone" class="photo-adjust__done" data-i18n="doneLabel">تم</button>
         </div>
       </div>
 
       <fieldset class="field-group">
-        <legend class="field-group__title">البيانات بالعربي</legend>
+        <legend class="field-group__title" data-i18n="personalDataLegend">البيانات الشخصية</legend>
         <div class="field">
-          <label for="titleAr">المسمى / اللقب</label>
-          <div class="dropdown" id="titleArDropdown">
-            <button type="button" id="titleAr" class="dropdown__trigger" aria-haspopup="listbox" aria-expanded="false">
+          <label for="title" data-i18n="titleLabel">المسمى / اللقب</label>
+          <div class="dropdown" id="titleDropdown">
+            <button type="button" id="title" class="dropdown__trigger" aria-haspopup="listbox" aria-expanded="false">
               <span class="dropdown__value"></span>
               <svg class="dropdown__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
             </button>
-            <ul class="dropdown__list" id="titleArList" role="listbox" hidden></ul>
+            <ul class="dropdown__list" id="titleList" role="listbox" hidden></ul>
           </div>
         </div>
-        <div class="field" id="titleArCustomField" hidden>
-          <label for="titleArCustom">اكتب اللقب</label>
-          <input id="titleArCustom" name="titleArCustom" type="text" placeholder="اكتب اللقب">
-          <span class="field__inline-error" id="titleArCustomError" hidden></span>
+        <div class="field" id="titleCustomField" hidden>
+          <label for="titleCustom" data-i18n="titleCustomLabel">اكتب اللقب</label>
+          <input id="titleCustom" name="titleCustom" type="text" data-i18n-placeholder="titleCustomPlaceholder" placeholder="اكتب اللقب">
+          <span class="field__inline-error" id="titleCustomError" hidden></span>
         </div>
         <div class="field">
-          <label for="nameAr">الاسم الثلاثي</label>
-          <input id="nameAr" name="nameAr" type="text" required placeholder="اكتب الاسم الثلاثي">
-          <span class="field__inline-error" id="nameArError" hidden></span>
+          <label for="name" data-i18n="nameLabel">الاسم الثلاثي</label>
+          <input id="name" name="name" type="text" required data-i18n-placeholder="namePlaceholder" placeholder="اكتب الاسم الثلاثي">
+          <span class="field__inline-error" id="nameError" hidden></span>
         </div>
         <div class="field">
-          <label for="deptAr">المسمى الوظيفي</label>
-          <input id="deptAr" name="deptAr" type="text" required placeholder="اكتب المسمى الوظيفي">
-          <span class="field__inline-error" id="deptArError" hidden></span>
+          <label for="dept" data-i18n="deptLabel">المسمى الوظيفي</label>
+          <input id="dept" name="dept" type="text" required data-i18n-placeholder="deptPlaceholder" placeholder="اكتب المسمى الوظيفي">
+          <span class="field__inline-error" id="deptError" hidden></span>
         </div>
       </fieldset>
 
       <fieldset class="field-group">
-        <legend class="field-group__title">البيانات بالإنجليزي</legend>
-
-        <div class="toggle-row">
-          <label class="switch">
-            <input type="checkbox" id="enableEnglish" checked>
-            <span class="switch__track"><span class="switch__thumb"></span></span>
-          </label>
-          <span class="toggle-row__label">تفعيل النسخة الإنجليزية</span>
-        </div>
-        <p class="field-group__hint">
-          البطاقة تعرض بالعربي والإنجليزي مع إمكانية تبديل اللغة. لو عطّلت هذا الخيار، بطاقتك تصدر بالعربي فقط بدون زر تبديل لغة، ولا حاجة لتعبئة الحقول التالية.
-        </p>
-
-        <div id="englishFields" class="english-fields">
-          <div class="field">
-            <label for="titleEn">المسمى / اللقب بالإنجليزي</label>
-            <div class="dropdown" id="titleEnDropdown" dir="ltr">
-              <button type="button" id="titleEn" class="dropdown__trigger" aria-haspopup="listbox" aria-expanded="false">
-                <span class="dropdown__value"></span>
-                <svg class="dropdown__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
-              </button>
-              <ul class="dropdown__list" id="titleEnList" role="listbox" hidden></ul>
-            </div>
-          </div>
-          <div class="field" id="titleEnCustomField" hidden>
-            <label for="titleEnCustom">اكتب اللقب بالإنجليزي</label>
-            <input id="titleEnCustom" name="titleEnCustom" type="text" dir="ltr" placeholder="اكتب اللقب بالإنجليزي">
-            <span class="field__inline-error" id="titleEnCustomError" hidden></span>
-          </div>
-          <div class="field">
-            <label for="nameEn">الاسم الثلاثي بالإنجليزي</label>
-            <input id="nameEn" name="nameEn" type="text" dir="ltr" placeholder="اكتب الاسم الثلاثي بالإنجليزي">
-            <span class="field__inline-error" id="nameEnError" hidden></span>
-          </div>
-          <div class="field">
-            <label for="deptEn">المسمى الوظيفي بالإنجليزي</label>
-            <input id="deptEn" name="deptEn" type="text" dir="ltr" placeholder="اكتب المسمى الوظيفي بالإنجليزي">
-            <span class="field__inline-error" id="deptEnError" hidden></span>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset class="field-group">
-        <legend class="field-group__title">معلومات التواصل</legend>
+        <legend class="field-group__title" data-i18n="contactLegend">معلومات التواصل</legend>
         <div class="field">
-          <label for="mobile">رقم الجوال</label>
+          <label for="mobile" data-i18n="phoneLabel">رقم الجوال</label>
           <div class="phone-input" dir="ltr">
             <span class="phone-input__prefix">+966</span>
             <input id="mobile" name="mobile" type="tel" required inputmode="numeric" lang="en" maxlength="9" placeholder="5XXXXXXXX">
@@ -128,7 +90,7 @@
           <span class="field__inline-error" id="mobileError" hidden></span>
         </div>
         <div class="field">
-          <label for="workPhone">هاتف العمل <span class="field__hint">(اختياري)</span></label>
+          <label for="workPhone"><span data-i18n="phone2Label">هاتف العمل</span> <span class="field__hint" data-i18n="optionalHint">(اختياري)</span></label>
           <div class="phone-input" dir="ltr">
             <span class="phone-input__prefix">+966</span>
             <input id="workPhone" name="workPhone" type="tel" inputmode="numeric" lang="en" maxlength="9" placeholder="1XXXXXXXX">
@@ -136,7 +98,7 @@
           <span class="field__inline-error" id="workPhoneError" hidden></span>
         </div>
         <div class="field">
-          <label for="extension">رقم التحويلة <span class="field__hint">(اختياري)</span></label>
+          <label for="extension"><span data-i18n="extensionLabel">رقم التحويلة</span> <span class="field__hint" data-i18n="optionalHint">(اختياري)</span></label>
           <div class="phone-input" dir="ltr">
             <span class="phone-input__prefix">920000427،</span>
             <input id="extension" name="extension" type="tel" inputmode="numeric" lang="en" maxlength="4" placeholder="XXXX">
@@ -144,9 +106,9 @@
           <span class="field__inline-error" id="extensionError" hidden></span>
         </div>
         <div class="field">
-          <label for="email">البريد الإلكتروني</label>
+          <label for="email" data-i18n="emailLabel">البريد الإلكتروني</label>
           <div class="phone-input" dir="ltr">
-            <input id="email" name="email" type="text" required autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="اكتب بداية البريد الإلكتروني">
+            <input id="email" name="email" type="text" required autocapitalize="off" autocorrect="off" spellcheck="false" data-i18n-placeholder="emailPlaceholder" placeholder="اكتب بداية البريد الإلكتروني">
             <span class="phone-input__suffix">@geosa.gov.sa</span>
           </div>
           <span class="field__inline-error" id="emailError" hidden></span>
@@ -156,7 +118,7 @@
       <p id="formError" class="form-error" hidden></p>
 
       <button type="submit" class="btn-primary">
-        <span>إنشاء البطاقة الرقمية</span>
+        <span data-i18n="submitLabel">إنشاء البطاقة الرقمية</span>
       </button>
     </form>
   </section>
@@ -164,14 +126,13 @@
   <!-- Brief transition shown while the card is being generated -->
   <div id="loadingView" class="loading-card" hidden>
     <span class="loading-spinner" aria-hidden="true"></span>
-    <p class="loading-text">جاري إنشاء البطاقة...</p>
+    <p class="loading-text" data-i18n="loadingText">جاري إنشاء البطاقة...</p>
   </div>
 
   <!-- Card: generated from the form data -->
   <main id="cardView" class="card" hidden>
 
     <header class="card__header">
-      <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch language">EN</button>
       <div class="card__logo">
         <img src="assets/logo.webp" alt="شعار الجهة" class="card__logo-icon i18n-logo">
       </div>

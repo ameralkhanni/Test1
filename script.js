@@ -42,7 +42,38 @@ const translations = {
     qrScanHint: "امسح الرمز لحفظ بيانات التواصل مباشرة",
     shareLabel: "مشاركة",
     footerOrg: fixedOrg.ar,
-    toggleLabel: "EN"
+
+    // Form
+    formHeading: "إنشاء البطاقة الرقمية",
+    formSubtitle: "يُرجى تعبئة البيانات التالية لإصدار بطاقتك التعريفية الرقمية فورًا",
+    photoLabel: "الصورة الشخصية",
+    photoHint: "يُفضّل صورة شخصية حديثة وواضحة، بخلفية بيضاء أو شفافة",
+    photoAdjustHint: "اسحب الصورة لتحديد الموضع، وحرّك الشريط للتكبير",
+    doneLabel: "تم",
+    personalDataLegend: "البيانات الشخصية",
+    contactLegend: "معلومات التواصل",
+    titleLabel: "المسمى / اللقب",
+    titleCustomLabel: "اكتب اللقب",
+    titleCustomPlaceholder: "اكتب اللقب",
+    nameLabel: "الاسم الثلاثي",
+    namePlaceholder: "اكتب الاسم الثلاثي",
+    deptLabel: "المسمى الوظيفي",
+    deptPlaceholder: "اكتب المسمى الوظيفي",
+    extensionLabel: "رقم التحويلة",
+    optionalHint: "(اختياري)",
+    emailPlaceholder: "اكتب بداية البريد الإلكتروني",
+    submitLabel: "إنشاء البطاقة الرقمية",
+    loadingText: "جاري إنشاء البطاقة...",
+    requiredFieldsError: "الرجاء تعبئة جميع الحقول المطلوبة.",
+    titlePlaceholder: "اختر اللقب",
+    otherLabel: "أخرى",
+    arabicOnlyMessage: "يسمح بالحروف العربية فقط، بدون أرقام أو رموز",
+    englishOnlyMessage: "يسمح بالحروف الإنجليزية فقط، بدون أرقام أو رموز",
+    digitsOnlyMessage: "يسمح بالأرقام فقط",
+    mobileFormatMessage: "رقم الجوال يجب أن يبدأ بـ5 ويتكون من 9 أرقام",
+    workPhoneFormatMessage: "هاتف العمل يجب أن يبدأ بـ1 ويتكون من 9 أرقام",
+    extensionFormatMessage: "رقم التحويلة يجب أن يتكون من 4 أرقام فقط",
+    emailLocalOnlyMessage: "يحتوي على أحرف إنجليزية و(-_.) فقط"
   },
   en: {
     dir: "ltr",
@@ -62,7 +93,38 @@ const translations = {
     qrScanHint: "Scan the code to save contact details directly",
     shareLabel: "Share",
     footerOrg: fixedOrg.en,
-    toggleLabel: "AR"
+
+    // Form
+    formHeading: "Create Digital Card",
+    formSubtitle: "Please fill in the following details to issue your digital ID card instantly",
+    photoLabel: "Profile Photo",
+    photoHint: "A recent, clear photo with a white or transparent background is preferred",
+    photoAdjustHint: "Drag the photo to reposition it, and use the slider to zoom",
+    doneLabel: "Done",
+    personalDataLegend: "Personal Data",
+    contactLegend: "Contact Information",
+    titleLabel: "Title",
+    titleCustomLabel: "Enter the title",
+    titleCustomPlaceholder: "Enter the title",
+    nameLabel: "Full Name",
+    namePlaceholder: "Enter the full name",
+    deptLabel: "Job Title",
+    deptPlaceholder: "Enter the job title",
+    extensionLabel: "Extension Number",
+    optionalHint: "(optional)",
+    emailPlaceholder: "Enter the beginning of your email",
+    submitLabel: "Create Digital Card",
+    loadingText: "Creating your card...",
+    requiredFieldsError: "Please fill in all required fields.",
+    titlePlaceholder: "Choose title",
+    otherLabel: "Other",
+    arabicOnlyMessage: "Only Arabic letters are allowed, no digits or symbols",
+    englishOnlyMessage: "Only English letters are allowed, no digits or symbols",
+    digitsOnlyMessage: "Only digits are allowed",
+    mobileFormatMessage: "Mobile number must start with 5 and be 9 digits long",
+    workPhoneFormatMessage: "Work phone must start with 1 and be 9 digits long",
+    extensionFormatMessage: "Extension must be exactly 4 digits",
+    emailLocalOnlyMessage: "Only English letters and (-_.) are allowed"
   }
 };
 
@@ -84,16 +146,10 @@ const photoAdjustPanel = document.getElementById("photoAdjustPanel");
 const photoZoomSlider = document.getElementById("photoZoom");
 const photoAdjustDone = document.getElementById("photoAdjustDone");
 
-const titleArCustomField = document.getElementById("titleArCustomField");
-const titleArCustomInput = document.getElementById("titleArCustom");
-const nameArInput = document.getElementById("nameAr");
-const deptArInput = document.getElementById("deptAr");
-const titleEnCustomField = document.getElementById("titleEnCustomField");
-const titleEnCustomInput = document.getElementById("titleEnCustom");
-const nameEnInput = document.getElementById("nameEn");
-const deptEnInput = document.getElementById("deptEn");
-const enableEnglishToggle = document.getElementById("enableEnglish");
-const englishFields = document.getElementById("englishFields");
+const titleCustomField = document.getElementById("titleCustomField");
+const titleCustomInput = document.getElementById("titleCustom");
+const nameInput = document.getElementById("name");
+const deptInput = document.getElementById("dept");
 const mobileInput = document.getElementById("mobile");
 const workPhoneInput = document.getElementById("workPhone");
 const extensionInput = document.getElementById("extension");
@@ -103,27 +159,21 @@ const workPhoneWrapper = workPhoneInput.closest(".phone-input");
 const extensionWrapper = extensionInput.closest(".phone-input");
 const emailWrapper = emailInput.closest(".phone-input");
 
-// Arabic name/title/department fields accept Arabic letters only (no digits or symbols);
-// their English counterparts accept Latin letters only.
+// Name/title/department accept Arabic letters only while the form is in
+// Arabic, or Latin letters only while it's in English — whichever script
+// matches the card that's about to be generated.
 const ARABIC_ONLY = /[^ء-يـ\s]/g;
 const ENGLISH_ONLY = /[^a-zA-Z\s]/g;
-const ARABIC_ONLY_MESSAGE = "يسمح بالحروف العربية فقط، بدون أرقام أو رموز";
-const ENGLISH_ONLY_MESSAGE = "يسمح بالحروف الإنجليزية فقط، بدون أرقام أو رموز";
 const DIGITS_ONLY = /[^0-9]/g;
-const DIGITS_ONLY_MESSAGE = "يسمح بالأرقام فقط";
 const MOBILE_PREFIX = "+966";
 const MOBILE_PATTERN = /^5[0-9]{8}$/;
-const MOBILE_FORMAT_MESSAGE = "رقم الجوال يجب أن يبدأ بـ5 ويتكون من 9 أرقام";
 const mobileErrorEl = document.getElementById("mobileError");
 const WORK_PHONE_PATTERN = /^1[0-9]{8}$/;
-const WORK_PHONE_FORMAT_MESSAGE = "هاتف العمل يجب أن يبدأ بـ1 ويتكون من 9 أرقام";
 const workPhoneErrorEl = document.getElementById("workPhoneError");
 const EXTENSION_PATTERN = /^[0-9]{4}$/;
-const EXTENSION_FORMAT_MESSAGE = "رقم التحويلة يجب أن يتكون من 4 أرقام فقط";
 const extensionErrorEl = document.getElementById("extensionError");
 const EMAIL_DOMAIN = "@geosa.gov.sa";
 const EMAIL_LOCAL_ONLY = /[^a-zA-Z._-]/g;
-const EMAIL_LOCAL_ONLY_MESSAGE = "يحتوي على أحرف إنجليزية و(-_.) فقط";
 const emailErrorEl = document.getElementById("emailError");
 
 // Mobile keyboards (especially with an Arabic locale) often type
@@ -137,14 +187,22 @@ function toWesternDigits(str) {
   });
 }
 
-function restrictInput(el, pattern, message, errorEl, transform) {
+// pattern/messageKey may be a fixed value or a function evaluated on every
+// keystroke, so name/title/dept can switch which script they restrict to
+// the moment the form's language changes. Every message is looked up from
+// `translations[currentLang]` at the moment it's shown, not baked in at
+// setup, so switching language mid-fill also switches any error text
+// already on screen.
+function restrictInput(el, patternSource, messageKeySource, errorEl, transform) {
   let hideTimer = null;
   el.addEventListener("input", () => {
+    const pattern = typeof patternSource === "function" ? patternSource() : patternSource;
+    const messageKey = typeof messageKeySource === "function" ? messageKeySource() : messageKeySource;
     const source = transform ? transform(el.value) : el.value;
     const filtered = source.replace(pattern, "");
     if (filtered !== el.value) {
       el.value = filtered;
-      errorEl.textContent = message;
+      errorEl.textContent = translations[currentLang][messageKey];
       errorEl.hidden = false;
       clearTimeout(hideTimer);
       hideTimer = setTimeout(() => {
@@ -154,25 +212,25 @@ function restrictInput(el, pattern, message, errorEl, transform) {
   });
 }
 
-restrictInput(nameArInput, ARABIC_ONLY, ARABIC_ONLY_MESSAGE, document.getElementById("nameArError"));
-restrictInput(deptArInput, ARABIC_ONLY, ARABIC_ONLY_MESSAGE, document.getElementById("deptArError"));
-restrictInput(titleArCustomInput, ARABIC_ONLY, ARABIC_ONLY_MESSAGE, document.getElementById("titleArCustomError"));
-restrictInput(nameEnInput, ENGLISH_ONLY, ENGLISH_ONLY_MESSAGE, document.getElementById("nameEnError"));
-restrictInput(deptEnInput, ENGLISH_ONLY, ENGLISH_ONLY_MESSAGE, document.getElementById("deptEnError"));
-restrictInput(titleEnCustomInput, ENGLISH_ONLY, ENGLISH_ONLY_MESSAGE, document.getElementById("titleEnCustomError"));
-restrictInput(mobileInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, mobileErrorEl, toWesternDigits);
-restrictInput(workPhoneInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, workPhoneErrorEl, toWesternDigits);
-restrictInput(extensionInput, DIGITS_ONLY, DIGITS_ONLY_MESSAGE, extensionErrorEl, toWesternDigits);
-restrictInput(emailInput, EMAIL_LOCAL_ONLY, EMAIL_LOCAL_ONLY_MESSAGE, emailErrorEl);
+const scriptPattern = () => (currentLang === "ar" ? ARABIC_ONLY : ENGLISH_ONLY);
+const scriptMessageKey = () => (currentLang === "ar" ? "arabicOnlyMessage" : "englishOnlyMessage");
 
-function validatePhoneFormat(input, pattern, message, errorEl, required) {
+restrictInput(nameInput, scriptPattern, scriptMessageKey, document.getElementById("nameError"));
+restrictInput(deptInput, scriptPattern, scriptMessageKey, document.getElementById("deptError"));
+restrictInput(titleCustomInput, scriptPattern, scriptMessageKey, document.getElementById("titleCustomError"));
+restrictInput(mobileInput, DIGITS_ONLY, "digitsOnlyMessage", mobileErrorEl, toWesternDigits);
+restrictInput(workPhoneInput, DIGITS_ONLY, "digitsOnlyMessage", workPhoneErrorEl, toWesternDigits);
+restrictInput(extensionInput, DIGITS_ONLY, "digitsOnlyMessage", extensionErrorEl, toWesternDigits);
+restrictInput(emailInput, EMAIL_LOCAL_ONLY, "emailLocalOnlyMessage", emailErrorEl);
+
+function validatePhoneFormat(input, pattern, messageKey, errorEl, required) {
   const val = input.value.trim();
   if (!val) {
     errorEl.hidden = true;
     return !required;
   }
   if (!pattern.test(val)) {
-    errorEl.textContent = message;
+    errorEl.textContent = translations[currentLang][messageKey];
     errorEl.hidden = false;
     return false;
   }
@@ -181,19 +239,19 @@ function validatePhoneFormat(input, pattern, message, errorEl, required) {
 }
 
 function validateMobileFormat() {
-  const ok = validatePhoneFormat(mobileInput, MOBILE_PATTERN, MOBILE_FORMAT_MESSAGE, mobileErrorEl, true);
+  const ok = validatePhoneFormat(mobileInput, MOBILE_PATTERN, "mobileFormatMessage", mobileErrorEl, true);
   mobileWrapper.classList.toggle("is-invalid", !ok);
   return ok;
 }
 
 function validateWorkPhoneFormat() {
-  const ok = validatePhoneFormat(workPhoneInput, WORK_PHONE_PATTERN, WORK_PHONE_FORMAT_MESSAGE, workPhoneErrorEl, false);
+  const ok = validatePhoneFormat(workPhoneInput, WORK_PHONE_PATTERN, "workPhoneFormatMessage", workPhoneErrorEl, false);
   workPhoneWrapper.classList.toggle("is-invalid", !ok);
   return ok;
 }
 
 function validateExtensionFormat() {
-  const ok = validatePhoneFormat(extensionInput, EXTENSION_PATTERN, EXTENSION_FORMAT_MESSAGE, extensionErrorEl, false);
+  const ok = validatePhoneFormat(extensionInput, EXTENSION_PATTERN, "extensionFormatMessage", extensionErrorEl, false);
   extensionWrapper.classList.toggle("is-invalid", !ok);
   return ok;
 }
@@ -207,23 +265,12 @@ mobileInput.addEventListener("input", () => mobileWrapper.classList.remove("is-i
 workPhoneInput.addEventListener("input", () => workPhoneWrapper.classList.remove("is-invalid"));
 extensionInput.addEventListener("input", () => extensionWrapper.classList.remove("is-invalid"));
 emailInput.addEventListener("input", () => emailWrapper.classList.remove("is-invalid"));
-[nameArInput, deptArInput, nameEnInput, deptEnInput, titleArCustomInput, titleEnCustomInput].forEach((el) => {
+[nameInput, deptInput, titleCustomInput].forEach((el) => {
   el.addEventListener("input", () => el.classList.remove("is-invalid"));
 });
 
-// Turning the English toggle off hides that section and drops it from
-// validation entirely; turning it back on clears any stale red highlights.
-function updateEnglishFieldsVisibility() {
-  englishFields.hidden = !enableEnglishToggle.checked;
-  if (!enableEnglishToggle.checked) {
-    [nameEnInput, deptEnInput, titleEnCustomInput].forEach((el) => el.classList.remove("is-invalid"));
-    titleEnSelect.trigger.classList.remove("is-invalid");
-  }
-}
-
-enableEnglishToggle.addEventListener("change", updateEnglishFieldsVisibility);
-
-const langToggle = document.getElementById("langToggle");
+const formLangToggle = document.getElementById("formLangToggle");
+const langSwitchOptions = formLangToggle.querySelectorAll(".lang-switch__option");
 const saveContactBtn = document.getElementById("saveContactBtn");
 const saveImageBtn = document.getElementById("saveImageBtn");
 const cardActions = document.querySelector(".card__actions");
@@ -275,11 +322,28 @@ class Dropdown {
     this.trigger = this.wrapper.querySelector(".dropdown__trigger");
     this.valueLabel = this.wrapper.querySelector(".dropdown__value");
     this.list = this.wrapper.querySelector(".dropdown__list");
-    this.options = options;
-    this.placeholder = placeholderText;
     this._value = "";
     this._changeListeners = [];
 
+    this.setOptions(options, placeholderText);
+
+    this.trigger.addEventListener("click", () => this.toggle());
+    this.trigger.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") this.close();
+    });
+    document.addEventListener("click", (e) => {
+      if (!this.wrapper.contains(e.target)) this.close();
+    });
+  }
+
+  // Rebuilds the option list from scratch and resets the current selection —
+  // used both for initial setup and when the form's language changes (the
+  // Arabic and English title word lists don't correspond 1:1, so a prior
+  // pick can't be carried over automatically).
+  setOptions(options, placeholderText) {
+    this.options = options;
+    this.placeholder = placeholderText;
+    this._value = "";
     this.list.innerHTML = "";
     options.forEach((opt) => {
       const li = document.createElement("li");
@@ -301,17 +365,8 @@ class Dropdown {
       });
       this.list.appendChild(li);
     });
-
     this.valueLabel.textContent = placeholderText;
     this.valueLabel.classList.add("is-placeholder");
-
-    this.trigger.addEventListener("click", () => this.toggle());
-    this.trigger.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") this.close();
-    });
-    document.addEventListener("click", (e) => {
-      if (!this.wrapper.contains(e.target)) this.close();
-    });
   }
 
   toggle() {
@@ -353,7 +408,7 @@ class Dropdown {
 // Arabic titles are gendered (الدكتور/الدكتورة), so every variant gets its
 // own option, keyed by its index in TITLE_OPTIONS.
 const arTitleOptions = TITLE_OPTIONS.map((opt, i) => ({ value: String(i), label: opt.ar }));
-arTitleOptions.push({ value: OTHER_TITLE, label: "أخرى" });
+arTitleOptions.push({ value: OTHER_TITLE, label: translations.ar.otherLabel });
 
 // English titles have no gendered forms, so the list is deduplicated;
 // the option value is the English text itself.
@@ -364,89 +419,24 @@ TITLE_OPTIONS.forEach((opt) => {
   seenEnTitles.add(opt.en);
   enTitleOptions.push({ value: opt.en, label: opt.en });
 });
-enTitleOptions.push({ value: OTHER_TITLE, label: "أخرى بالإنجليزي" });
+enTitleOptions.push({ value: OTHER_TITLE, label: translations.en.otherLabel });
 
-const titleArSelect = new Dropdown("titleArDropdown", arTitleOptions, "اختر اللقب");
-const titleEnSelect = new Dropdown("titleEnDropdown", enTitleOptions, "اختر اللقب بالإنجليزي");
+const titleSelect = new Dropdown(
+  "titleDropdown",
+  currentLang === "ar" ? arTitleOptions : enTitleOptions,
+  translations[currentLang].titlePlaceholder
+);
 
-function syncTitleFromAr() {
-  const val = titleArSelect.value;
-  if (val === OTHER_TITLE) {
-    titleArCustomField.hidden = false;
-    titleEnSelect.value = OTHER_TITLE;
-    titleEnCustomField.hidden = false;
-  } else if (val !== "") {
-    titleArCustomField.hidden = true;
-    titleEnSelect.value = TITLE_OPTIONS[Number(val)].en;
-    titleEnCustomField.hidden = true;
-  }
-}
+titleSelect.addEventListener("change", () => {
+  titleCustomField.hidden = titleSelect.value !== OTHER_TITLE;
+  titleSelect.trigger.classList.remove("is-invalid");
+});
 
-function syncTitleFromEn() {
-  const val = titleEnSelect.value;
-  if (val === OTHER_TITLE) {
-    titleEnCustomField.hidden = false;
-    titleArSelect.value = OTHER_TITLE;
-    titleArCustomField.hidden = false;
-  } else if (val !== "") {
-    titleEnCustomField.hidden = true;
-    const currentAr = titleArSelect.value;
-    const currentArMatches =
-      currentAr !== "" && currentAr !== OTHER_TITLE && TITLE_OPTIONS[Number(currentAr)].en === val;
-    if (!currentArMatches) {
-      const idx = TITLE_OPTIONS.findIndex((opt) => opt.en === val);
-      if (idx !== -1) titleArSelect.value = String(idx);
-    }
-    titleArCustomField.hidden = true;
-  }
-}
-
-titleArSelect.addEventListener("change", syncTitleFromAr);
-titleEnSelect.addEventListener("change", syncTitleFromEn);
-titleArSelect.addEventListener("change", () => titleArSelect.trigger.classList.remove("is-invalid"));
-titleEnSelect.addEventListener("change", () => titleEnSelect.trigger.classList.remove("is-invalid"));
-
-function resolveTitleAr(select, customInput) {
+function resolveTitle(select, customInput) {
   const val = select.value;
   if (val === OTHER_TITLE) return customInput.value.trim();
   if (val === "") return "";
-  return TITLE_OPTIONS[Number(val)].ar;
-}
-
-function resolveTitleEn(select, customInput) {
-  const val = select.value;
-  if (val === OTHER_TITLE) return customInput.value.trim();
-  return val;
-}
-
-function setTitleFieldAr(select, customField, customInput, value) {
-  const idx = TITLE_OPTIONS.findIndex((opt) => opt.ar === value);
-  if (idx !== -1) {
-    select.value = String(idx);
-    customField.hidden = true;
-  } else if (value) {
-    select.value = OTHER_TITLE;
-    customField.hidden = false;
-    customInput.value = value;
-  } else {
-    select.value = "";
-    customField.hidden = true;
-  }
-}
-
-function setTitleFieldEn(select, customField, customInput, value) {
-  const exists = select.options.some((o) => o.value === value);
-  if (value && exists) {
-    select.value = value;
-    customField.hidden = true;
-  } else if (value) {
-    select.value = OTHER_TITLE;
-    customField.hidden = false;
-    customInput.value = value;
-  } else {
-    select.value = "";
-    customField.hidden = true;
-  }
+  return currentLang === "ar" ? TITLE_OPTIONS[Number(val)].ar : val;
 }
 
 function resizeImage(file, maxDim, quality) {
@@ -611,72 +601,14 @@ photoAdjustDone.addEventListener("click", async (e) => {
   closePhotoAdjuster();
 });
 
-function prefillForm() {
-  if (!cardData) return;
-  setTitleFieldAr(titleArSelect, titleArCustomField, titleArCustomInput, cardData.ar.title);
-  nameArInput.value = cardData.ar.name;
-  deptArInput.value = cardData.ar.dept;
-
-  // Missing hasEnglish means data saved before this toggle existed — those
-  // cards always had English data, so default to enabled for them.
-  const hasEnglish = cardData.hasEnglish !== false && !!cardData.en;
-  enableEnglishToggle.checked = hasEnglish;
-  if (hasEnglish) {
-    setTitleFieldEn(titleEnSelect, titleEnCustomField, titleEnCustomInput, cardData.en.title);
-    nameEnInput.value = cardData.en.name;
-    deptEnInput.value = cardData.en.dept;
-  } else {
-    setTitleFieldEn(titleEnSelect, titleEnCustomField, titleEnCustomInput, "");
-    nameEnInput.value = "";
-    deptEnInput.value = "";
-  }
-  updateEnglishFieldsVisibility();
-
-  mobileInput.value = cardData.mobile.startsWith(MOBILE_PREFIX)
-    ? cardData.mobile.slice(MOBILE_PREFIX.length)
-    : cardData.mobile;
-  const workPhone = cardData.workPhone || "";
-  workPhoneInput.value = workPhone.startsWith(MOBILE_PREFIX)
-    ? workPhone.slice(MOBILE_PREFIX.length)
-    : workPhone;
-  extensionInput.value = cardData.extension || "";
-  emailInput.value = cardData.email.endsWith(EMAIL_DOMAIN)
-    ? cardData.email.slice(0, -EMAIL_DOMAIN.length)
-    : cardData.email;
-
-  if (cardData.photo && cardData.photo !== DEFAULT_AVATAR) {
-    pendingPhoto = cardData.photo;
-    photoSource = { dataUrl: cardData.photo, width: PHOTO_OUTPUT_SIZE, height: PHOTO_OUTPUT_SIZE };
-    photoZoom = 1;
-    photoPanX = 0;
-    photoPanY = 0;
-    photoPreview.src = cardData.photo;
-    photoPreview.style.transform = "";
-    photoPreview.hidden = false;
-    photoPlaceholder.hidden = true;
-    photoEditBtn.hidden = false;
-  } else {
-    pendingPhoto = null;
-    photoSource = null;
-    photoPreview.hidden = true;
-    photoPlaceholder.hidden = false;
-    photoEditBtn.hidden = true;
-  }
-  closePhotoAdjuster();
-}
-
 function showForm() {
   cardView.hidden = true;
   formView.hidden = false;
-  prefillForm();
 }
 
 function showCard() {
   formView.hidden = true;
   cardView.hidden = false;
-  const hasEnglish = cardData.hasEnglish !== false && !!cardData.en;
-  langToggle.hidden = !hasEnglish;
-  if (!hasEnglish) currentLang = "ar";
   applyLanguage(currentLang);
 }
 
@@ -686,22 +618,12 @@ cardForm.addEventListener("submit", async (e) => {
   const mobileOk = validateMobileFormat();
   const workPhoneOk = validateWorkPhoneFormat();
   const extensionOk = validateExtensionFormat();
-  const hasEnglish = enableEnglishToggle.checked;
 
   const data = {
-    ar: {
-      title: resolveTitleAr(titleArSelect, titleArCustomInput),
-      name: nameArInput.value.trim(),
-      dept: deptArInput.value.trim()
-    },
-    en: hasEnglish
-      ? {
-          title: resolveTitleEn(titleEnSelect, titleEnCustomInput),
-          name: nameEnInput.value.trim(),
-          dept: deptEnInput.value.trim()
-        }
-      : null,
-    hasEnglish,
+    lang: currentLang,
+    title: resolveTitle(titleSelect, titleCustomInput),
+    name: nameInput.value.trim(),
+    dept: deptInput.value.trim(),
     mobile: mobileInput.value.trim() ? MOBILE_PREFIX + mobileInput.value.trim() : "",
     workPhone: workPhoneInput.value.trim() ? MOBILE_PREFIX + workPhoneInput.value.trim() : "",
     extension: extensionInput.value.trim(),
@@ -712,30 +634,22 @@ cardForm.addEventListener("submit", async (e) => {
   // Highlight every invalid field in red, in the same top-to-bottom order as
   // the form itself, so focus lands on whichever one the user hits first.
   const fieldChecks = [
-    { invalid: !data.ar.title, el: titleArSelect.value === OTHER_TITLE ? titleArCustomInput : titleArSelect.trigger },
-    { invalid: !data.ar.name, el: nameArInput },
-    { invalid: !data.ar.dept, el: deptArInput },
+    { invalid: !data.title, el: titleSelect.value === OTHER_TITLE ? titleCustomInput : titleSelect.trigger },
+    { invalid: !data.name, el: nameInput },
+    { invalid: !data.dept, el: deptInput },
     { invalid: !mobileOk, el: mobileWrapper },
     { invalid: !workPhoneOk, el: workPhoneWrapper },
     { invalid: !extensionOk, el: extensionWrapper },
     { invalid: !data.email, el: emailWrapper }
   ];
 
-  if (hasEnglish) {
-    fieldChecks.splice(4, 0,
-      { invalid: !data.en.title, el: titleEnSelect.value === OTHER_TITLE ? titleEnCustomInput : titleEnSelect.trigger },
-      { invalid: !data.en.name, el: nameEnInput },
-      { invalid: !data.en.dept, el: deptEnInput }
-    );
-  }
-
   fieldChecks.forEach(({ invalid, el }) => el.classList.toggle("is-invalid", invalid));
   const firstInvalid = fieldChecks.find((c) => c.invalid);
 
   if (firstInvalid) {
-    formError.textContent = "الرجاء تعبئة جميع الحقول المطلوبة.";
+    formError.textContent = translations[currentLang].requiredFieldsError;
     formError.hidden = false;
-    const el = firstInvalid.focusEl || firstInvalid.el;
+    const el = firstInvalid.el;
     const focusable = el.matches("input, button") ? el : el.querySelector("input, button");
     (focusable || el).focus();
     return;
@@ -760,26 +674,54 @@ function formatPhoneDisplay(fullNumber) {
   return `${MOBILE_PREFIX} ${local.slice(0, 2)} ${local.slice(2, 5)} ${local.slice(5, 9)}`;
 }
 
+// Drives the language for the whole app — the intake form (before a card
+// exists) and the generated card (after) alike. There is no bilingual card:
+// whichever language the employee filled the form in is exactly what the
+// resulting card is issued in, permanently.
 function applyLanguage(lang) {
-  if (!cardData) return;
   const t = translations[lang];
-  const d = cardData[lang];
 
   document.documentElement.lang = lang;
   document.documentElement.dir = t.dir;
-  document.title = `${d.title} ${d.name} | ${t.pageTitleSuffix}`;
-
-  cardJobTitle.textContent = d.title;
-  cardName.textContent = d.name;
-  cardDept.textContent = d.dept;
-
-  cardAvatar.src = cardData.photo;
-  cardAvatar.alt = t.avatarAlt;
 
   document.querySelectorAll(".i18n-logo").forEach((img) => {
     img.src = t.logoSrc;
     img.alt = t.logoAlt;
   });
+
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    el.textContent = t[el.dataset.i18n];
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    el.placeholder = t[el.dataset.i18nPlaceholder];
+  });
+
+  formLangToggle.classList.toggle("is-en", lang === "en");
+  langSwitchOptions.forEach((btn) => {
+    btn.classList.toggle("is-active", btn.dataset.lang === lang);
+  });
+  currentLang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+
+  if (!cardData) {
+    // Switching the form's language swaps which script the title dropdown
+    // offers (e.g. "المهندس" vs "Engineer"); any prior selection can't carry
+    // over since the two option sets don't correspond 1:1.
+    titleSelect.setOptions(lang === "ar" ? arTitleOptions : enTitleOptions, t.titlePlaceholder);
+    titleCustomField.hidden = true;
+    titleCustomInput.value = "";
+    document.title = t.formHeading;
+    return;
+  }
+
+  document.title = `${cardData.title} ${cardData.name} | ${t.pageTitleSuffix}`;
+
+  cardJobTitle.textContent = cardData.title;
+  cardName.textContent = cardData.name;
+  cardDept.textContent = cardData.dept;
+
+  cardAvatar.src = cardData.photo;
+  cardAvatar.alt = t.avatarAlt;
 
   mobileRow.href = `tel:${cardData.mobile}`;
   mobileValue.textContent = formatPhoneDisplay(cardData.mobile);
@@ -799,15 +741,6 @@ function applyLanguage(lang) {
   emailRow.href = `mailto:${cardData.email}`;
   emailValue.textContent = cardData.email;
 
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    el.textContent = t[el.dataset.i18n];
-  });
-
-  langToggle.textContent = t.toggleLabel;
-
-  currentLang = lang;
-  localStorage.setItem(LANG_KEY, lang);
-
   updateQRCodes();
 }
 
@@ -820,21 +753,20 @@ function abbreviateTitle(title, lang) {
   return lang === "ar" ? opt.abbrAr : opt.abbrEn;
 }
 
-function buildVCard(lang) {
-  const d = cardData[lang];
-  const addr = fixedAddress[lang];
-  const org = fixedOrg[lang];
-  const vCardTitle = abbreviateTitle(d.title, lang);
-  const nameParts = d.name.split(" ").filter(Boolean);
-  const firstName = nameParts[0] || d.name;
-  const lastName = nameParts.slice(1).join(" ") || d.name;
+function buildVCard() {
+  const addr = fixedAddress[cardData.lang];
+  const org = fixedOrg[cardData.lang];
+  const vCardTitle = abbreviateTitle(cardData.title, cardData.lang);
+  const nameParts = cardData.name.split(" ").filter(Boolean);
+  const firstName = nameParts[0] || cardData.name;
+  const lastName = nameParts.slice(1).join(" ") || cardData.name;
 
   const lines = [
     "BEGIN:VCARD",
     "VERSION:3.0",
     `N:${lastName};${firstName};;${vCardTitle};`,
-    `FN:${vCardTitle} ${d.name}`,
-    `TITLE:${d.dept}`,
+    `FN:${vCardTitle} ${cardData.name}`,
+    `TITLE:${cardData.dept}`,
     `ORG:${org}`,
     `TEL;TYPE=CELL:${cardData.mobile}`
   ];
@@ -890,7 +822,7 @@ function renderQRToCanvas(canvas, text, sizePx) {
 
 function updateQRCodes() {
   if (!cardData) return;
-  const vCardText = buildVCard(currentLang);
+  const vCardText = buildVCard();
   renderQRToCanvas(qrCanvasSmall, vCardText, 40);
   renderQRToCanvas(qrCanvasLarge, vCardText, 220);
 }
@@ -941,27 +873,26 @@ function exportCanvasImage(canvas, filename) {
 }
 
 qrShareBtn.addEventListener("click", () => {
-  const name = cardData[currentLang].name.replace(/\s+/g, "-");
+  const name = cardData.name.replace(/\s+/g, "-");
   exportCanvasImage(qrCanvasLarge, `${name}-qr.png`);
 });
 
 saveContactBtn.addEventListener("click", () => {
-  const d = cardData[currentLang];
-  const vCardText = buildVCard(currentLang);
+  const vCardText = buildVCard();
   const blob = new Blob([vCardText], { type: "text/vcard;charset=utf-8" });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${d.name.replace(/\s+/g, "-")}.vcf`;
+  link.download = `${cardData.name.replace(/\s+/g, "-")}.vcf`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 });
 
-langToggle.addEventListener("click", () => {
-  applyLanguage(currentLang === "ar" ? "en" : "ar");
+langSwitchOptions.forEach((btn) => {
+  btn.addEventListener("click", () => applyLanguage(btn.dataset.lang));
 });
 
 saveImageBtn.addEventListener("click", async () => {
@@ -969,15 +900,13 @@ saveImageBtn.addEventListener("click", async () => {
 
   saveImageBtn.disabled = true;
 
-  // Hide the interactive chrome (language toggle, action buttons, small QR
-  // badge) so the exported image only shows the shareable card face, and
-  // swap the contact box for a large QR code of the same vCard data.
-  const langWasHidden = langToggle.hidden;
-  langToggle.hidden = true;
+  // Hide the interactive chrome (action buttons, small QR badge) so the
+  // exported image only shows the shareable card face, and swap the contact
+  // box for a large QR code of the same vCard data.
   cardActions.style.display = "none";
   qrThumbBtn.hidden = true;
   cardContact.hidden = true;
-  renderQRToCanvas(qrCanvasExport, buildVCard(currentLang), 240);
+  renderQRToCanvas(qrCanvasExport, buildVCard(), 240);
   cardQRExport.hidden = false;
   cardView.classList.add("exporting");
   // Reflow before the snapshot so html2canvas reads the settled state.
@@ -989,7 +918,7 @@ saveImageBtn.addEventListener("click", async () => {
       backgroundColor: null,
       useCORS: true
     });
-    const fileName = `${cardData[currentLang].name.replace(/\s+/g, "-")}-card.png`;
+    const fileName = `${cardData.name.replace(/\s+/g, "-")}-card.png`;
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
     const file = new File([blob], fileName, { type: "image/png" });
 
@@ -1015,7 +944,6 @@ saveImageBtn.addEventListener("click", async () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   } finally {
-    langToggle.hidden = langWasHidden;
     cardActions.style.display = "";
     qrThumbBtn.hidden = false;
     cardContact.hidden = false;
@@ -1025,4 +953,5 @@ saveImageBtn.addEventListener("click", async () => {
   }
 });
 
+applyLanguage(currentLang);
 showForm();

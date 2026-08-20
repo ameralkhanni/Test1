@@ -178,31 +178,55 @@ body {
   position: relative;
 }
 
-.lang-toggle {
+.lang-switch {
   position: absolute;
   top: 14px;
   left: 14px;
   z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  padding: 3px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.lang-switch__thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  background: #ffffff;
+  border-radius: 999px;
+  transition: transform 0.2s ease;
+}
+
+.lang-switch.is-en .lang-switch__thumb {
+  transform: translateX(100%);
+}
+
+.lang-switch__option {
+  position: relative;
+  z-index: 1;
+  min-width: 34px;
+  border: none;
+  background: transparent;
   color: #ffffff;
   font-family: inherit;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.03em;
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 999px;
   cursor: pointer;
-  backdrop-filter: blur(4px);
-  transition: background-color 0.15s ease, transform 0.15s ease;
+  transition: color 0.2s ease;
 }
 
-.lang-toggle:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.lang-toggle:active {
-  transform: scale(0.95);
+.lang-switch__option.is-active {
+  color: var(--teal-dark);
 }
 
 .card__logo {
@@ -552,6 +576,7 @@ body {
   background-repeat: repeat;
   padding: 30px 24px 26px;
   text-align: center;
+  position: relative;
 }
 
 .form-card__logo {
@@ -709,76 +734,6 @@ body {
   border: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.toggle-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.toggle-row__label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-dark);
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 22px;
-  flex-shrink: 0;
-}
-
-.switch input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  margin: 0;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.switch__track {
-  position: absolute;
-  inset: 0;
-  background: #c7d3d5;
-  border-radius: 999px;
-  transition: background-color 0.15s ease;
-}
-
-.switch__thumb {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease;
-}
-
-.switch input:checked ~ .switch__track {
-  background: var(--blue-accent);
-}
-
-.switch input:checked ~ .switch__track .switch__thumb {
-  transform: translateX(18px);
-}
-
-.field-group__hint {
-  margin: -8px 0 0;
-  font-size: 11.5px;
-  color: #9aa7a9;
-  line-height: 1.5;
-}
-
-.english-fields {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -1101,12 +1056,21 @@ body {
 @media (min-width: 1024px) {
   body {
     align-items: center;
-    padding: 40px 24px;
+    padding: 20px 24px;
   }
 
   /* Card */
   .card {
     max-width: 640px;
+    margin-top: 0;
+  }
+
+  .form-card {
+    margin: 0;
+  }
+
+  .loading-card {
+    margin-top: 0;
   }
 
   .card__header {
@@ -1114,11 +1078,23 @@ body {
     background-size: 300px auto;
   }
 
-  .lang-toggle {
+  .lang-switch {
     top: 18px;
     left: 18px;
-    font-size: 15px;
-    padding: 8px 18px;
+    padding: 4px;
+  }
+
+  .lang-switch__thumb {
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+  }
+
+  .lang-switch__option {
+    min-width: 42px;
+    font-size: 14px;
+    padding: 8px 15px;
   }
 
   .card__logo-icon {
@@ -1292,7 +1268,6 @@ body {
   }
 
   .field__label,
-  .toggle-row__label,
   .field-group__title,
   .field label {
     font-size: 17px;
@@ -1338,24 +1313,6 @@ body {
   .photo-adjust__done {
     font-size: 16px;
     padding: 8px 28px;
-  }
-
-  .switch {
-    width: 52px;
-    height: 28px;
-  }
-
-  .switch__thumb {
-    width: 22px;
-    height: 22px;
-  }
-
-  .switch input:checked ~ .switch__track .switch__thumb {
-    transform: translateX(24px);
-  }
-
-  .field-group__hint {
-    font-size: 15px;
   }
 
   .field input,
