@@ -38,6 +38,9 @@ const translations = {
     addressValue: `${fixedAddress.ar.city}، ${fixedAddress.ar.country}\n${fixedAddress.ar.street}، ${fixedAddress.ar.district}، الرمز البريدي ${fixedAddress.ar.postalCode}`,
     addContact: "إضافة إلى جهات الاتصال",
     saveImage: "حفظ البطاقة كصورة",
+    qrExportHint: "امسح الرمز لحفظ بيانات التواصل",
+    qrScanHint: "امسح الرمز لحفظ بيانات التواصل مباشرة",
+    shareLabel: "مشاركة",
     footerOrg: fixedOrg.ar,
     toggleLabel: "EN"
   },
@@ -55,6 +58,9 @@ const translations = {
     addressValue: `${fixedAddress.en.city}, ${fixedAddress.en.country}\n${fixedAddress.en.street}, ${fixedAddress.en.district}, Zip Code ${fixedAddress.en.postalCode}`,
     addContact: "Add to Contacts",
     saveImage: "Save Card Image",
+    qrExportHint: "Scan the code to save contact details",
+    qrScanHint: "Scan the code to save contact details directly",
+    shareLabel: "Share",
     footerOrg: fixedOrg.en,
     toggleLabel: "AR"
   }
@@ -221,6 +227,9 @@ const langToggle = document.getElementById("langToggle");
 const saveContactBtn = document.getElementById("saveContactBtn");
 const saveImageBtn = document.getElementById("saveImageBtn");
 const cardActions = document.querySelector(".card__actions");
+const cardContact = document.querySelector(".card__contact");
+const cardQRExport = document.getElementById("cardQRExport");
+const qrCanvasExport = document.getElementById("qrCanvasExport");
 
 const qrThumbBtn = document.getElementById("qrThumbBtn");
 const qrCanvasSmall = document.getElementById("qrCanvasSmall");
@@ -960,11 +969,16 @@ saveImageBtn.addEventListener("click", async () => {
 
   saveImageBtn.disabled = true;
 
-  // Hide the interactive chrome (language toggle, action buttons) so the
-  // exported image only shows the shareable card face.
+  // Hide the interactive chrome (language toggle, action buttons, small QR
+  // badge) so the exported image only shows the shareable card face, and
+  // swap the contact box for a large QR code of the same vCard data.
   const langWasHidden = langToggle.hidden;
   langToggle.hidden = true;
   cardActions.style.display = "none";
+  qrThumbBtn.hidden = true;
+  cardContact.hidden = true;
+  renderQRToCanvas(qrCanvasExport, buildVCard(currentLang), 240);
+  cardQRExport.hidden = false;
   cardView.classList.add("exporting");
   // Reflow before the snapshot so html2canvas reads the settled state.
   void cardView.offsetHeight;
@@ -1003,6 +1017,9 @@ saveImageBtn.addEventListener("click", async () => {
   } finally {
     langToggle.hidden = langWasHidden;
     cardActions.style.display = "";
+    qrThumbBtn.hidden = false;
+    cardContact.hidden = false;
+    cardQRExport.hidden = true;
     cardView.classList.remove("exporting");
     saveImageBtn.disabled = false;
   }

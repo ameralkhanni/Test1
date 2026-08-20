@@ -63,8 +63,8 @@
           <span class="field__inline-error" id="titleArCustomError" hidden></span>
         </div>
         <div class="field">
-          <label for="nameAr">الاسم الكامل</label>
-          <input id="nameAr" name="nameAr" type="text" required placeholder="اكتب الاسم الكامل">
+          <label for="nameAr">الاسم الثلاثي</label>
+          <input id="nameAr" name="nameAr" type="text" required placeholder="اكتب الاسم الثلاثي">
           <span class="field__inline-error" id="nameArError" hidden></span>
         </div>
         <div class="field">
@@ -105,8 +105,8 @@
             <span class="field__inline-error" id="titleEnCustomError" hidden></span>
           </div>
           <div class="field">
-            <label for="nameEn">الاسم الكامل بالإنجليزي</label>
-            <input id="nameEn" name="nameEn" type="text" dir="ltr" placeholder="اكتب الاسم الكامل بالإنجليزي">
+            <label for="nameEn">الاسم الثلاثي بالإنجليزي</label>
+            <input id="nameEn" name="nameEn" type="text" dir="ltr" placeholder="اكتب الاسم الثلاثي بالإنجليزي">
             <span class="field__inline-error" id="nameEnError" hidden></span>
           </div>
           <div class="field">
@@ -190,7 +190,7 @@
         <canvas id="qrCanvasSmall"></canvas>
         <span class="card__qr-label">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 16V7.85l-2.6 2.6L7 9l5-5 5 5-1.4 1.45-2.6-2.6V16Zm-5 4q-.825 0-1.412-.587Q4 18.825 4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413Q18.825 20 18 20Z"/></svg>
-          مشاركة
+          <span data-i18n="shareLabel"></span>
         </span>
       </button>
     </section>
@@ -243,6 +243,13 @@
       </a>
     </section>
 
+    <!-- Shown only while exporting the card as an image, replacing the
+         contact box above with a large scannable QR code -->
+    <section id="cardQRExport" class="card__qr-export" hidden>
+      <canvas id="qrCanvasExport"></canvas>
+      <p class="card__qr-export-hint" data-i18n="qrExportHint"></p>
+    </section>
+
     <section class="card__actions">
       <button id="saveContactBtn" class="btn-primary" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5z"/><path d="M19 11h2v2h-2v2h-2v-2h-2v-2h2V9h2z"/></svg>
@@ -268,11 +275,11 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4l5.6 5.6 1.4-1.4L13.4 12 19 6.4 17.6 5 12 10.6z"/></svg>
       </button>
       <canvas id="qrCanvasLarge" class="qr-modal__canvas"></canvas>
-      <p class="qr-modal__hint">امسح الرمز لحفظ بيانات التواصل مباشرة</p>
+      <p class="qr-modal__hint" data-i18n="qrScanHint"></p>
       <div class="qr-modal__actions">
         <button type="button" id="qrShareBtn" class="btn-secondary">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 16V7.85l-2.6 2.6L7 9l5-5 5 5-1.4 1.45-2.6-2.6V16Zm-5 4q-.825 0-1.412-.587Q4 18.825 4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413Q18.825 20 18 20Z"/></svg>
-          <span>مشاركة</span>
+          <span data-i18n="shareLabel"></span>
         </button>
       </div>
     </div>
